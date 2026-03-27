@@ -1,7 +1,11 @@
 // Copyright 2019 the Resvg Authors
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
-use std::sync::Arc;
+use alloc::string::String;
+use alloc::string::ToString;
+use alloc::sync::Arc;
+use alloc::vec;
+use alloc::vec::Vec;
 
 use kurbo::{ParamCurve, ParamCurveArclen};
 use svgtypes::{FontFamily, Length, LengthUnit, parse_font_families};
@@ -584,7 +588,7 @@ fn conv_font_stretch(node: SvgNode) -> FontStretch {
 
 fn resolve_font_weight(node: SvgNode) -> u16 {
     fn bound(min: usize, val: usize, max: usize) -> usize {
-        std::cmp::max(min, std::cmp::min(max, val))
+        core::cmp::max(min, core::cmp::min(max, val))
     }
 
     let nodes: Vec<_> = node.ancestors().collect();
@@ -716,7 +720,7 @@ fn resolve_positions_list(text_node: SvgNode, state: &converter::State) -> Vec<C
                     if let Some(num_list) = super::units::convert_list(child, $aid, state) {
                         // Note that we are using not the total count,
                         // but the amount of characters in the current `tspan` (with children).
-                        let len = std::cmp::min(num_list.len(), child_chars);
+                        let len = core::cmp::min(num_list.len(), child_chars);
                         for i in 0..len {
                             list[offset + i].$field = Some(num_list[i]);
                         }

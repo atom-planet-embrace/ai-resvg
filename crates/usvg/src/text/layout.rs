@@ -1,9 +1,13 @@
 // Copyright 2022 the Resvg Authors
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
-use std::collections::{HashMap, HashSet};
-use std::num::NonZeroU16;
-use std::sync::Arc;
+use alloc::string::String;
+use alloc::string::ToString;
+use alloc::sync::Arc;
+use alloc::vec;
+use alloc::vec::Vec;
+use core::num::NonZeroU16;
+use hashbrown::{HashMap, HashSet};
 
 use fontdb::{Database, ID};
 use kurbo::{ParamCurve, ParamCurveArclen, ParamCurveDeriv};
@@ -367,7 +371,7 @@ pub(crate) fn layout_text(
 
         if text_node.writing_mode == WritingMode::TopToBottom {
             if let TextFlow::Linear = chunk.text_flow {
-                std::mem::swap(&mut curr_pos.0, &mut curr_pos.1);
+                core::mem::swap(&mut curr_pos.0, &mut curr_pos.1);
             }
         }
 
@@ -1530,7 +1534,7 @@ impl<'a> GlyphClusters<'a> {
 }
 
 impl Iterator for GlyphClusters<'_> {
-    type Item = (std::ops::Range<usize>, ByteIndex);
+    type Item = (core::ops::Range<usize>, ByteIndex);
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.idx == self.data.len() {

@@ -1,7 +1,9 @@
 // Copyright 2018 the Resvg Authors
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
-use std::sync::Arc;
+use alloc::boxed::Box;
+use alloc::string::ToString;
+use alloc::sync::Arc;
 
 use svgtypes::{Length, LengthUnit as Unit};
 

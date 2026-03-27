@@ -3,9 +3,14 @@
 
 //! A collection of SVG filters.
 
-use std::collections::HashSet;
-use std::str::FromStr;
-use std::sync::Arc;
+use alloc::format;
+use alloc::string::String;
+use alloc::string::ToString;
+use alloc::sync::Arc;
+use alloc::vec;
+use alloc::vec::Vec;
+use core::str::FromStr;
+use hashbrown::HashSet;
 
 use strict_num::PositiveF32;
 use svgtypes::{AspectRatio, Length, LengthUnit as Unit};

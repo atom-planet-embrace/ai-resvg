@@ -16,6 +16,8 @@ mod switch;
 mod units;
 mod use_node;
 
+use alloc::boxed::Box;
+
 #[cfg(feature = "text")]
 mod text;
 #[cfg(feature = "text")]
@@ -53,8 +55,8 @@ impl From<roxmltree::Error> for Error {
     }
 }
 
-impl std::fmt::Display for Error {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+impl core::fmt::Display for Error {
+    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
         match *self {
             Error::NotAnUtf8Str => {
                 write!(f, "provided data has not an UTF-8 encoding")
@@ -75,7 +77,7 @@ impl std::fmt::Display for Error {
     }
 }
 
-impl std::error::Error for Error {}
+// Note: std::error::Error is not available in no_std
 
 pub(crate) trait OptionLog {
     fn log_none<F: FnOnce()>(self, f: F) -> Self;
@@ -98,10 +100,10 @@ impl crate::Tree {
     pub fn from_data(data: &[u8], opt: &Options) -> Result<Self, Error> {
         if data.starts_with(&[0x1f, 0x8b]) {
             let data = decompress_svgz(data)?;
-            let text = std::str::from_utf8(&data).map_err(|_| Error::NotAnUtf8Str)?;
+            let text = core::str::from_utf8(&data).map_err(|_| Error::NotAnUtf8Str)?;
             Self::from_str(text, opt)
         } else {
-            let text = std::str::from_utf8(data).map_err(|_| Error::NotAnUtf8Str)?;
+            let text = core::str::from_utf8(data).map_err(|_| Error::NotAnUtf8Str)?;
             Self::from_str(text, opt)
         }
     }
@@ -163,15 +165,52 @@ impl crate::Tree {
 }
 
 /// Decompresses an SVGZ file.
-pub fn decompress_svgz(data: &[u8]) -> Result<Vec<u8>, Error> {
-    use std::io::Read;
+///
+/// In no_std mode, this manually parses the gzip header and uses
+/// `miniz_oxide` (via `flate2`'s backend) for raw DEFLATE decompression.
+pub fn decompress_svgz(data: &[u8]) -> Result<alloc::vec::Vec<u8>, Error> {
+    // Parse gzip header to find the start of the DEFLATE payload.
+    let deflate_start = skip_gzip_header(data).ok_or(Error::MalformedGZip)?;
+    let deflate_data = &data[deflate_start..];
+    // miniz_oxide (the backend of flate2) can decompress raw DEFLATE without std::io.
+    miniz_oxide::inflate::decompress_to_vec(deflate_data).map_err(|_| Error::MalformedGZip)
+}
 
-    let mut decoder = flate2::read::GzDecoder::new(data);
-    let mut decoded = Vec::with_capacity(data.len() * 2);
-    decoder
-        .read_to_end(&mut decoded)
-        .map_err(|_| Error::MalformedGZip)?;
-    Ok(decoded)
+/// Skips the gzip header and returns the byte offset of the DEFLATE payload.
+fn skip_gzip_header(data: &[u8]) -> Option<usize> {
+    // Minimum gzip header is 10 bytes: ID1 ID2 CM FLG MTIME(4) XFL OS
+    if data.len() < 10 || data[0] != 0x1f || data[1] != 0x8b || data[2] != 0x08 {
+        return None;
+    }
+    let flg = data[3];
+    let mut pos = 10;
+    // FEXTRA
+    if flg & 0x04 != 0 {
+        if pos + 2 > data.len() {
+            return None;
+        }
+        let xlen = u16::from_le_bytes([data[pos], data[pos + 1]]) as usize;
+        pos += 2 + xlen;
+    }
+    // FNAME - null-terminated
+    if flg & 0x08 != 0 {
+        while pos < data.len() && data[pos] != 0 {
+            pos += 1;
+        }
+        pos += 1; // skip null terminator
+    }
+    // FCOMMENT - null-terminated
+    if flg & 0x10 != 0 {
+        while pos < data.len() && data[pos] != 0 {
+            pos += 1;
+        }
+        pos += 1;
+    }
+    // FHCRC
+    if flg & 0x02 != 0 {
+        pos += 2;
+    }
+    if pos <= data.len() { Some(pos) } else { None }
 }
 
 #[inline]

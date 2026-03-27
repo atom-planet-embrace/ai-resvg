@@ -1,8 +1,9 @@
 // Copyright 2018 the Resvg Authors
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
-use std::str::FromStr;
-use std::sync::Arc;
+use alloc::string::ToString;
+use alloc::sync::Arc;
+use core::str::FromStr;
 
 use super::converter;
 use super::svgtree::{AId, EId, SvgNode};

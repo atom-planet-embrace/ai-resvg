@@ -1,7 +1,10 @@
 // Copyright 2018 the Resvg Authors
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
-use std::sync::Arc;
+use alloc::boxed::Box;
+use alloc::string::String;
+use alloc::sync::Arc;
+use alloc::vec::Vec;
 
 use strict_num::NonZeroPositiveF32;
 pub use svgtypes::FontFamily;
@@ -92,8 +95,8 @@ impl PartialEq for FontVariation {
 
 impl Eq for FontVariation {}
 
-impl std::hash::Hash for FontVariation {
-    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+impl core::hash::Hash for FontVariation {
+    fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
         self.tag.hash(state);
         self.value.to_bits().hash(state);
     }

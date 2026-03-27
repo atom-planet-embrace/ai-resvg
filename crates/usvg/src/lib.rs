@@ -46,10 +46,13 @@ and can focus just on the rendering part.
 [SVG]: https://en.wikipedia.org/wiki/Scalable_Vector_Graphics
 */
 
+#![no_std]
 #![forbid(unsafe_code)]
 #![warn(missing_docs)]
 #![warn(missing_debug_implementations)]
 #![warn(missing_copy_implementations)]
+
+extern crate alloc;
 
 mod parser;
 #[cfg(feature = "text")]

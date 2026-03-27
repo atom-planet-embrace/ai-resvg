@@ -1,8 +1,13 @@
 // Copyright 2022 the Resvg Authors
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
-use std::mem;
-use std::sync::Arc;
+use alloc::boxed::Box;
+use alloc::format;
+use alloc::string::String;
+use alloc::sync::Arc;
+use alloc::vec;
+use alloc::vec::Vec;
+use core::mem;
 
 use fontdb::{Database, ID};
 use rustybuzz::ttf_parser;

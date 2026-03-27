@@ -1,8 +1,24 @@
 // Copyright 2023 the Resvg Authors
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
-use std::fmt::Display;
-use std::io::Write;
+use alloc::format;
+use alloc::string::String;
+use alloc::string::ToString;
+use alloc::vec::Vec;
+use core::fmt::Display;
+
+/// Helper to write formatted data into a `Vec<u8>` without requiring `std::io::Write`.
+fn write_bytes_fmt(buf: &mut Vec<u8>, args: core::fmt::Arguments<'_>) {
+    use core::fmt::Write;
+    struct Adapter<'a>(&'a mut Vec<u8>);
+    impl core::fmt::Write for Adapter<'_> {
+        fn write_str(&mut self, s: &str) -> core::fmt::Result {
+            self.0.extend_from_slice(s.as_bytes());
+            Ok(())
+        }
+    }
+    Adapter(buf).write_fmt(args).unwrap();
+}
 
 use svgtypes::{FontFamily, parse_font_families};
 use xmlwriter::XmlWriter;
@@ -1009,7 +1025,7 @@ impl XmlWriterExt for XmlWriter {
     fn write_numbers(&mut self, aid: AId, list: &[f32]) {
         self.write_attribute_raw(aid.to_str(), |buf| {
             for n in list {
-                buf.write_fmt(format_args!("{} ", n)).unwrap();
+                write_bytes_fmt(buf, format_args!("{} ", n));
             }
 
             if !list.is_empty() {
@@ -1101,14 +1117,13 @@ impl XmlWriterExt for XmlWriter {
         };
 
         self.write_attribute_raw("xlink:href", |buf| {
+            use base64::Engine;
             buf.extend_from_slice(b"data:image/");
             buf.extend_from_slice(mime.as_bytes());
             buf.extend_from_slice(b";base64, ");
 
-            let mut enc =
-                base64::write::EncoderWriter::new(buf, &base64::engine::general_purpose::STANDARD);
-            enc.write_all(data).unwrap();
-            enc.finish().unwrap();
+            let encoded = base64::engine::general_purpose::STANDARD.encode(data);
+            buf.extend_from_slice(encoded.as_bytes());
         });
     }
 }
@@ -1414,7 +1429,7 @@ static POW_VEC: &[f32] = &[
 fn write_num(num: f32, buf: &mut Vec<u8>, precision: u8) {
     // If number is an integer, it's faster to write it as i32.
     if num.fract().approx_zero_ulps(4) {
-        write!(buf, "{}", num as i32).unwrap();
+        write_bytes_fmt(buf, format_args!("{}", num as i32));
         return;
     }
 
@@ -1427,7 +1442,7 @@ fn write_num(num: f32, buf: &mut Vec<u8>, precision: u8) {
     // our output and tests reproducible.
     let v = (num * POW_VEC[precision as usize]).round() / POW_VEC[precision as usize];
 
-    write!(buf, "{}", v).unwrap();
+    write_bytes_fmt(buf, format_args!("{}", v));
 }
 
 /// Write all of the tspan attributes except for decorations.

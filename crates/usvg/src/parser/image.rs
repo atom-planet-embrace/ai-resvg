@@ -1,7 +1,12 @@
 // Copyright 2018 the Resvg Authors
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
-use std::sync::Arc;
+use alloc::boxed::Box;
+use alloc::format;
+use alloc::string::String;
+use alloc::string::ToString;
+use alloc::sync::Arc;
+use alloc::vec::Vec;
 
 use svgtypes::{AspectRatio, Length};
 
@@ -82,6 +87,9 @@ impl ImageHrefResolver<'_> {
     ///
     /// Paths have to be absolute or relative to the input SVG file or relative to
     /// [Options::resources_dir](crate::Options::resources_dir).
+    ///
+    /// Requires the `std` feature for filesystem access. Without `std`, returns a no-op resolver.
+    #[cfg(feature = "std")]
     pub fn default_string_resolver() -> ImageHrefStringResolverFn<'static> {
         Box::new(move |href: &str, opts: &Options| {
             let path = opts.get_abs_path(std::path::Path::new(href));
@@ -112,10 +120,18 @@ impl ImageHrefResolver<'_> {
             }
         })
     }
+
+    /// Creates a default string resolver (no_std fallback).
+    ///
+    /// Without filesystem access, this resolver always returns `None`.
+    #[cfg(not(feature = "std"))]
+    pub fn default_string_resolver() -> ImageHrefStringResolverFn<'static> {
+        Box::new(move |_href: &str, _opts: &Options| None)
+    }
 }
 
-impl std::fmt::Debug for ImageHrefResolver<'_> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl core::fmt::Debug for ImageHrefResolver<'_> {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.write_str("ImageHrefResolver { .. }")
     }
 }
@@ -271,7 +287,7 @@ pub(crate) fn convert_inner(
         // </g>
 
         let mut g2 = Group::empty();
-        std::mem::swap(&mut g.id, &mut g2.id);
+        core::mem::swap(&mut g.id, &mut g2.id);
         g2.abs_transform = parent.abs_transform;
         g2.clip_path = Some(Arc::new(clip));
         g2.children.push(Node::Group(Box::new(g)));
@@ -303,6 +319,7 @@ pub(crate) fn get_href_data(href: &str, state: &converter::State) -> Option<Imag
 
 /// Checks that file has a PNG, a GIF, a JPEG or a WebP magic bytes.
 /// Or an SVG(Z) extension.
+#[cfg(feature = "std")]
 fn get_image_file_format(path: &std::path::Path, data: &[u8]) -> Option<ImageFormat> {
     let ext = path.extension().and_then(|e| e.to_str())?.to_lowercase();
     if ext == "svg" || ext == "svgz" {

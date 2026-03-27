@@ -5,8 +5,11 @@ pub mod filter;
 mod geom;
 mod text;
 
-use std::fmt::Display;
-use std::sync::Arc;
+use alloc::boxed::Box;
+use alloc::string::String;
+use alloc::sync::Arc;
+use alloc::vec::Vec;
+use core::fmt::Display;
 
 pub use strict_num::{self, ApproxEqUlps, NonZeroPositiveF32, NormalizedF32, PositiveF32};
 
@@ -119,7 +122,7 @@ impl Default for ShapeRendering {
     }
 }
 
-impl std::str::FromStr for ShapeRendering {
+impl core::str::FromStr for ShapeRendering {
     type Err = &'static str;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -149,7 +152,7 @@ impl Default for TextRendering {
     }
 }
 
-impl std::str::FromStr for TextRendering {
+impl core::str::FromStr for TextRendering {
     type Err = &'static str;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -183,7 +186,7 @@ impl Default for ImageRendering {
     }
 }
 
-impl std::str::FromStr for ImageRendering {
+impl core::str::FromStr for ImageRendering {
     type Err = &'static str;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -230,7 +233,7 @@ impl Default for BlendMode {
 }
 
 impl Display for BlendMode {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         let blend_mode = match self {
             BlendMode::Normal => "normal",
             BlendMode::Multiply => "multiply",
@@ -343,7 +346,7 @@ impl LinearGradient {
     }
 }
 
-impl std::ops::Deref for LinearGradient {
+impl core::ops::Deref for LinearGradient {
     type Target = BaseGradient;
 
     fn deref(&self) -> &Self::Target {
@@ -397,7 +400,7 @@ impl RadialGradient {
     }
 }
 
-impl std::ops::Deref for RadialGradient {
+impl core::ops::Deref for RadialGradient {
     type Target = BaseGradient;
 
     fn deref(&self) -> &Self::Target {
@@ -1486,8 +1489,8 @@ impl ImageKind {
     }
 }
 
-impl std::fmt::Debug for ImageKind {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+impl core::fmt::Debug for ImageKind {
+    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
         match self {
             ImageKind::JPEG(_) => f.write_str("ImageKind::JPEG(..)"),
             ImageKind::PNG(_) => f.write_str("ImageKind::PNG(..)"),

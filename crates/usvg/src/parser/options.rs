@@ -1,8 +1,13 @@
 // Copyright 2018 the Resvg Authors
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
+use alloc::borrow::ToOwned;
+use alloc::string::String;
+use alloc::string::ToString;
+use alloc::vec;
+use alloc::vec::Vec;
 #[cfg(feature = "text")]
-use std::sync::Arc;
+use alloc::sync::Arc;
 
 #[cfg(feature = "text")]
 use crate::FontResolver;
@@ -17,7 +22,16 @@ pub struct Options<'a> {
     /// but can be set to any.
     ///
     /// Default: `None`
+    #[cfg(feature = "std")]
     pub resources_dir: Option<std::path::PathBuf>,
+
+    /// Directory that will be used during relative paths resolving.
+    ///
+    /// In no_std mode, this is a `String` path instead of `PathBuf`.
+    ///
+    /// Default: `None`
+    #[cfg(not(feature = "std"))]
+    pub resources_dir: Option<String>,
 
     /// Target DPI.
     ///
@@ -127,6 +141,7 @@ impl Options<'_> {
     /// Converts a relative path into absolute relative to the SVG file itself.
     ///
     /// If `Options::resources_dir` is not set, returns itself.
+    #[cfg(feature = "std")]
     pub fn get_abs_path(&self, rel_path: &std::path::Path) -> std::path::PathBuf {
         match self.resources_dir {
             Some(ref dir) => dir.join(rel_path),

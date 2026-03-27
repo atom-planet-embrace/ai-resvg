@@ -1,8 +1,11 @@
 // Copyright 2018 the Resvg Authors
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
-use std::str::FromStr;
-use std::sync::Arc;
+use alloc::boxed::Box;
+use alloc::string::ToString;
+use alloc::sync::Arc;
+use alloc::vec::Vec;
+use core::str::FromStr;
 
 use strict_num::PositiveF32;
 use svgtypes::{Length, LengthUnit as Unit};
@@ -1062,7 +1065,7 @@ impl Paint {
 
 fn push_pattern_transform(root: &mut Group, transform: Transform) {
     // TODO: we should update abs_transform in all descendants as well
-    let mut g = std::mem::replace(root, Group::empty());
+    let mut g = core::mem::replace(root, Group::empty());
     g.transform = transform;
     g.abs_transform = transform;
 
