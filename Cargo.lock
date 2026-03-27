@@ -18,6 +18,64 @@ dependencies = [
 ]
 
 [[package]]
+name = "ai-resvg"
+version = "0.47.0"
+dependencies = [
+ "ai-usvg",
+ "gif",
+ "image-webp",
+ "libm",
+ "log",
+ "no_std_io",
+ "once_cell",
+ "pico-args",
+ "png",
+ "rgb",
+ "svgtypes",
+ "tiny-skia",
+ "zune-jpeg",
+]
+
+[[package]]
+name = "ai-resvg-capi"
+version = "0.47.0"
+dependencies = [
+ "ai-resvg",
+ "log",
+ "no_std_io",
+]
+
+[[package]]
+name = "ai-usvg"
+version = "0.47.0"
+dependencies = [
+ "ai-imagesize",
+ "ai-xmlwriter",
+ "base64",
+ "data-url",
+ "fontdb",
+ "hashbrown",
+ "kurbo",
+ "libm",
+ "log",
+ "miniz_oxide",
+ "no_std_io",
+ "once_cell",
+ "pico-args",
+ "roxmltree 0.21.1",
+ "rustybuzz",
+ "simplecss",
+ "siphasher 1.0.2",
+ "strict-num",
+ "svgtypes",
+ "tiny-skia-path",
+ "ttf-parser",
+ "unicode-bidi",
+ "unicode-script",
+ "unicode-vo",
+]
+
+[[package]]
 name = "ai-xmlwriter"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -507,34 +565,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "resvg"
-version = "0.47.0"
-dependencies = [
- "gif",
- "image-webp",
- "libm",
- "log",
- "no_std_io",
- "once_cell",
- "pico-args",
- "png",
- "rgb",
- "svgtypes",
- "tiny-skia",
- "usvg",
- "zune-jpeg",
-]
-
-[[package]]
-name = "resvg-capi"
-version = "0.47.0"
-dependencies = [
- "log",
- "no_std_io",
- "resvg",
-]
-
-[[package]]
 name = "rgb"
 version = "0.8.53"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -719,36 +749,6 @@ name = "unicode-vo"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b1d386ff53b415b7fe27b50bb44679e2cc4660272694b7b6f3326d8480823a94"
-
-[[package]]
-name = "usvg"
-version = "0.47.0"
-dependencies = [
- "ai-imagesize",
- "ai-xmlwriter",
- "base64",
- "data-url",
- "fontdb",
- "hashbrown",
- "kurbo",
- "libm",
- "log",
- "miniz_oxide",
- "no_std_io",
- "once_cell",
- "pico-args",
- "roxmltree 0.21.1",
- "rustybuzz",
- "simplecss",
- "siphasher 1.0.2",
- "strict-num",
- "svgtypes",
- "tiny-skia-path",
- "ttf-parser",
- "unicode-bidi",
- "unicode-script",
- "unicode-vo",
-]
 
 [[package]]
 name = "version_check"

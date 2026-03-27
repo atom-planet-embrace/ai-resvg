@@ -12,6 +12,7 @@ workspace = "../.."
 
 [[bin]]
 name = "resvg"
+path = "src/main.rs"
 required-features = ["text", "system-fonts", "memmap-fonts"]
 
 [dependencies]

@@ -22,7 +22,7 @@ jobs:
           tag_name: ${{ github.ref }}
           name: ${{ github.ref_name }}
           body: |
-            - `resvg-0.*.0.tar.xz` is a sources archive with vendored Rust dependencies
+            - `ai-resvg-0.*.0.tar.xz` is a sources archive with vendored Rust dependencies
             - `resvg-explorer-extension.exe` is an SVG thumbnailer for Windows Explorer
 
             Check [CHANGELOG](https://github.com/atom-planet-embrace/ai-resvg/blob/${{ github.ref }}/CHANGELOG.md).
@@ -40,11 +40,11 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build resvg
-        run: cargo build --release
+        run: cargo build --release --features std,system-fonts,memmap-fonts
 
       - name: Build usvg
         working-directory: crates/usvg
-        run: cargo build --release
+        run: cargo build --release --features std,system-fonts,memmap-fonts
 
       - name: Collect
         working-directory: target/release
@@ -65,18 +65,18 @@ jobs:
         run: |
           VERSION=${{ steps.get_version.outputs.version-without-v }}
           echo $VERSION
-          git clone https://github.com/atom-planet-embrace/ai-resvg resvg-$VERSION
-          cd resvg-"$VERSION"
+          git clone https://github.com/atom-planet-embrace/ai-resvg ai-resvg-$VERSION
+          cd ai-resvg-"$VERSION"
           mkdir -p .cargo
           cargo vendor > .cargo/config
           cd ..
           env XZ_OPT="-9e" tar \
               --exclude=".git" \
-              --exclude="resvg-$VERSION/.github" \
-              --exclude="resvg-$VERSION/version-bump.md" \
-              --exclude="resvg-$VERSION/docs" \
-              -cJf resvg-"$VERSION".tar.xz resvg-"$VERSION"
-          cp resvg-"$VERSION".tar.xz bin/
+              --exclude="ai-resvg-$VERSION/.github" \
+              --exclude="ai-resvg-$VERSION/version-bump.md" \
+              --exclude="ai-resvg-$VERSION/docs" \
+              -cJf ai-resvg-"$VERSION".tar.xz ai-resvg-"$VERSION"
+          cp ai-resvg-"$VERSION".tar.xz bin/
 
       - name: Upload binaries
         uses: alexellis/upload-assets@0.2.2
@@ -98,13 +98,13 @@ jobs:
       - name: Build resvg
         env:
           RUSTFLAGS: -Ctarget-feature=+crt-static # make sure it's static
-        run: cargo build --release
+        run: cargo build --release --features std,system-fonts,memmap-fonts
 
       - name: Build usvg
         working-directory: crates/usvg
         env:
           RUSTFLAGS: -Ctarget-feature=+crt-static # make sure it's static
-        run: cargo build --release
+        run: cargo build --release --features std,system-fonts,memmap-fonts
 
       - name: Compress
         working-directory: target/release
@@ -117,7 +117,7 @@ jobs:
         working-directory: tools/explorer-thumbnailer
         env:
           RUSTFLAGS: -Ctarget-feature=+crt-static # make sure it's static
-        run: cargo build --release
+        run: cargo build --release --features std
 
       - name: Build thumbnailer installer
         working-directory: tools/explorer-thumbnailer/install
@@ -128,7 +128,7 @@ jobs:
       # Unlike other binaries, viewsvg isn't built with crt-static
       - name: Build C API
         working-directory: crates/c-api
-        run: cargo build --release
+        run: cargo build --release --features std
 
       - name: Prepare Developer Command Prompt for MSVC
         uses: ilammy/msvc-dev-cmd@v1
@@ -160,11 +160,11 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Build resvg
-        run: cargo build --release
+        run: cargo build --release --features std,system-fonts,memmap-fonts
 
       - name: Build usvg
         working-directory: crates/usvg
-        run: cargo build --release
+        run: cargo build --release --features std,system-fonts,memmap-fonts
 
       - name: Compress
         working-directory: target/release
@@ -174,7 +174,7 @@ jobs:
 
       - name: Build C API
         working-directory: crates/c-api
-        run: cargo build --release
+        run: cargo build --release --features std
 
       - name: Collect
         run: |
@@ -202,11 +202,11 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Build resvg
-        run: cargo build --release
+        run: cargo build --release --features std,system-fonts,memmap-fonts
 
       - name: Build usvg
         working-directory: crates/usvg
-        run: cargo build --release
+        run: cargo build --release --features std,system-fonts,memmap-fonts
 
       - name: Compress
         working-directory: target/release
@@ -216,7 +216,7 @@ jobs:
 
       - name: Build C API
         working-directory: crates/c-api
-        run: cargo build --release
+        run: cargo build --release --features std
 
       - name: Collect
         run: |

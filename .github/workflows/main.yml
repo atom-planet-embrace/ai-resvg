@@ -38,11 +38,11 @@ jobs:
 
     # We have to use the Release mode, otherwise it would take forever.
     - name: Test
-      run: cargo test --all --release
+      run: cargo test --all --features std --release
 
     - name: Build C API
       working-directory: crates/c-api
-      run: cargo build
+      run: cargo build --features std,system-fonts,memmap-fonts
 
     - name: Build C API without default features
       working-directory: crates/c-api
@@ -56,6 +56,24 @@ jobs:
       working-directory: crates/usvg
       run: cargo check --no-default-features
 
+  no-std:
+    name: no_std Build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Install thumbv7m target
+      run: rustup target add thumbv7m-none-eabi
+
+    - name: Build usvg (no_std)
+      working-directory: crates/usvg
+      run: cargo build --target thumbv7m-none-eabi --no-default-features
+
+    - name: Build resvg (no_std)
+      working-directory: crates/resvg
+      run: cargo build --target thumbv7m-none-eabi --no-default-features
+
   msrv:
     runs-on: ubuntu-latest
     steps:
@@ -68,7 +86,7 @@ jobs:
           toolchain: 1.87.0
 
       - name: Build
-        run: cargo build
+        run: cargo build --features std
 
   # We have some Windows specific code that we should check on each commit.
   windows:
@@ -83,12 +101,12 @@ jobs:
         working-directory: tools/explorer-thumbnailer
         env:
           RUSTFLAGS: -Ctarget-feature=+crt-static # make sure it's static
-        run: cargo build
+        run: cargo build --features std
 
       # Unlike other binaries, viewsvg isn't built with crt-static
       - name: Build C API
         working-directory: crates/c-api
-        run: cargo build --release
+        run: cargo build --release --features std
 
   # If this fails, consider changing your text or adding something to .typos.toml.
   typos:
