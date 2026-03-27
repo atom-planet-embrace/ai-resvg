@@ -23,7 +23,7 @@ base64 = { version = "0.22", default-features = false, features = ["alloc"] } # 
 hashbrown = "0.15"
 libm = "0.2"
 log = { version = "0.4", default-features = false }
-miniz_oxide = "0.8"
+flate2 = { package = "ai-flate2", git = "https://github.com/atom-planet-embrace/ai-flate2" }
 no_std_io = { version = "0.6", default-features = false, features = ["alloc"] }
 pico-args = { version = "0.5", features = ["eq-separator"], optional = true }
 strict-num = { version = "0.1.1", default-features = false }
@@ -33,7 +33,6 @@ xmlwriter = { package = "ai-xmlwriter", git = "https://github.com/atom-planet-em
 
 # parser
 data-url = { version = "0.3", default-features = false, features = ["alloc"] } # for href parsing
-# flate2 removed — using miniz_oxide directly for no_std SVGZ decompression
 imagesize = { package = "ai-imagesize", version = "0.14.0", features = ["gif", "jpeg", "png", "webp"] } # raster images size detection
 kurbo = { version = "0.13.0", default-features = false, features = ["libm"] } # Bezier curves utils
 roxmltree = { version = "0.21.1", default-features = false }
