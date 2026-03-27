@@ -25,7 +25,7 @@ log = { version = "0.4", default-features = false }
 flate2 = { package = "ai-flate2", version = "1.1" }
 no_std_io = { version = "0.6", default-features = false, features = ["alloc"] }
 pico-args = { version = "0.5", features = ["eq-separator"], optional = true }
-strict-num = { version = "0.1.1", default-features = false }
+strict-num = { package = "ai-strict-num", path = "/Users/michaelspiegel/Projects/atom-planet-embrace/ai-strict-num" }
 svgtypes = { version = "0.16.1", default-features = false, features = ["libm"] }
 tiny-skia-path = { version = "0.12.0", default-features = false, features = ["no-std-float"] }
 xmlwriter = { package = "ai-xmlwriter", git = "https://github.com/atom-planet-embrace/ai-xmlwriter", default-features = false }

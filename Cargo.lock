@@ -57,11 +57,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "ai-strict-num"
+version = "0.2.0"
+dependencies = [
+ "float-cmp",
+]
+
+[[package]]
 name = "ai-usvg"
 version = "0.47.0"
 dependencies = [
  "ai-flate2",
  "ai-imagesize",
+ "ai-strict-num",
  "ai-xmlwriter",
  "base64",
  "data-url",
@@ -77,7 +85,6 @@ dependencies = [
  "rustybuzz",
  "simplecss",
  "siphasher 1.0.2",
- "strict-num",
  "svgtypes",
  "tiny-skia-path",
  "ttf-parser",
@@ -249,6 +256,12 @@ dependencies = [
  "crc32fast",
  "miniz_oxide 0.8.9",
 ]
+
+[[package]]
+name = "float-cmp"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "98de4bbd547a563b716d8dfa9aad1cb19bfab00f4fa09a6a4ed21dbcf44ce9c4"
 
 [[package]]
 name = "foldhash"

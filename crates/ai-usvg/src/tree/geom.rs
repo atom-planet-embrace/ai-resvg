@@ -1,70 +1,14 @@
 // Copyright 2018 the Resvg Authors
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
+use strict_num::ApproxEqUlps;
 use svgtypes::{Align, AspectRatio};
 pub use tiny_skia_path::{NonZeroRect, Rect, Size, Transform};
-
-/// Approximate equality comparisons using ULPs (Units in the Last Place).
-///
-/// This is a no_std replacement for the `ApproxEqUlps` trait from `float-cmp`/`strict-num`.
-pub trait ApproxEqUlps {
-    /// The ULP distance type.
-    type U;
-
-    /// Checks if two values are approximately equal within the given ULP distance.
-    fn approx_eq_ulps(&self, other: &Self, ulps: Self::U) -> bool;
-
-    /// Checks if two values are NOT approximately equal within the given ULP distance.
-    fn approx_ne_ulps(&self, other: &Self, ulps: Self::U) -> bool {
-        !self.approx_eq_ulps(other, ulps)
-    }
-}
-
-impl ApproxEqUlps for f32 {
-    type U = i32;
-
-    fn approx_eq_ulps(&self, other: &Self, ulps: i32) -> bool {
-        // Handle NaN
-        if self.is_nan() || other.is_nan() {
-            return false;
-        }
-        // Handle exact equality (including +0 == -0)
-        if self == other {
-            return true;
-        }
-        // Different signs means not equal (except handled above)
-        if self.is_sign_positive() != other.is_sign_positive() {
-            return false;
-        }
-        let a = self.to_bits() as i32;
-        let b = other.to_bits() as i32;
-        (a - b).abs() <= ulps
-    }
-}
-
-impl ApproxEqUlps for f64 {
-    type U = i64;
-
-    fn approx_eq_ulps(&self, other: &Self, ulps: i64) -> bool {
-        if self.is_nan() || other.is_nan() {
-            return false;
-        }
-        if self == other {
-            return true;
-        }
-        if self.is_sign_positive() != other.is_sign_positive() {
-            return false;
-        }
-        let a = self.to_bits() as i64;
-        let b = other.to_bits() as i64;
-        (a - b).abs() <= ulps
-    }
-}
 
 /// Approximate zero equality comparisons.
 pub trait ApproxZeroUlps: ApproxEqUlps {
     /// Checks if the number is approximately zero.
-    fn approx_zero_ulps(&self, ulps: Self::U) -> bool;
+    fn approx_zero_ulps(&self, ulps: <Self::Flt as strict_num::Ulps>::U) -> bool;
 }
 
 impl ApproxZeroUlps for f32 {
