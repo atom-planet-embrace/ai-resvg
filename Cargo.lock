@@ -78,8 +78,7 @@ dependencies = [
 [[package]]
 name = "ai-xmlwriter"
 version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "60280ffed08e88a6abb4ca0bf9e988b743030a8f22bcbbe722ff7bc3c8624492"
+source = "git+https://github.com/atom-planet-embrace/ai-xmlwriter#7d11bf2224cc2f2305299a3c09e2eb5a1524c353"
 dependencies = [
  "no_std_io",
 ]

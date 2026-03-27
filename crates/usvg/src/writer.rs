@@ -21,7 +21,7 @@ fn write_bytes_fmt(buf: &mut Vec<u8>, args: core::fmt::Arguments<'_>) {
 }
 
 use svgtypes::{FontFamily, parse_font_families};
-type XmlWriter<'a> = xmlwriter::XmlWriter<'a, Vec<u8>>;
+type XmlWriter = xmlwriter::XmlWriter;
 
 use crate::parser::{AId, EId};
 use crate::*;
@@ -155,11 +155,10 @@ impl Default for WriteOptions {
 }
 
 pub(crate) fn convert(tree: &Tree, opt: &WriteOptions) -> String {
-    let mut xml = xmlwriter::XmlWriter::new(Vec::new(), xmlwriter::Options {
+    let mut xml = xmlwriter::XmlWriter::new(xmlwriter::Options {
         use_single_quote: opt.use_single_quote,
         indent: opt.indent,
         attributes_indent: opt.attributes_indent,
-        enable_self_closing: true,
     });
 
     xml.start_svg_element(EId::Svg);
@@ -177,11 +176,10 @@ pub(crate) fn convert(tree: &Tree, opt: &WriteOptions) -> String {
 
     write_elements(&tree.root, false, opt, &mut xml);
 
-    let buf = xml.end_document().expect("XML writing to Vec<u8> should not fail");
-    String::from_utf8(buf).expect("XML output should be valid UTF-8")
+    xml.end_document()
 }
 
-fn write_filters(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter<'_>) {
+fn write_filters(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter) {
     let mut written_fe_image_nodes: Vec<String> = Vec::new();
     for filter in tree.filters() {
         for fe in &filter.primitives {
@@ -506,7 +504,7 @@ fn write_filters(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter<'_>) {
     }
 }
 
-fn write_defs(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter<'_>, write_text_paths: bool) {
+fn write_defs(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter, write_text_paths: bool) {
     xml.start_svg_element(EId::Defs);
     for lg in tree.linear_gradients() {
         xml.start_svg_element(EId::LinearGradient);
@@ -631,7 +629,7 @@ fn has_text_paths(parent: &Group) -> bool {
 }
 
 /// Write the `path` elements for text paths.
-fn write_text_path_paths(parent: &Group, opt: &WriteOptions, xml: &mut XmlWriter<'_>) {
+fn write_text_path_paths(parent: &Group, opt: &WriteOptions, xml: &mut XmlWriter) {
     for node in &parent.children {
         if let Node::Group(group) = node {
             write_text_path_paths(group, opt, xml);
@@ -659,13 +657,13 @@ fn write_text_path_paths(parent: &Group, opt: &WriteOptions, xml: &mut XmlWriter
     }
 }
 
-fn write_elements(parent: &Group, is_clip_path: bool, opt: &WriteOptions, xml: &mut XmlWriter<'_>) {
+fn write_elements(parent: &Group, is_clip_path: bool, opt: &WriteOptions, xml: &mut XmlWriter) {
     for n in &parent.children {
         write_element(n, is_clip_path, opt, xml);
     }
 }
 
-fn write_element(node: &Node, is_clip_path: bool, opt: &WriteOptions, xml: &mut XmlWriter<'_>) {
+fn write_element(node: &Node, is_clip_path: bool, opt: &WriteOptions, xml: &mut XmlWriter) {
     match node {
         Node::Path(p) => {
             write_path(p, is_clip_path, Transform::default(), None, opt, xml);
@@ -824,7 +822,7 @@ fn write_element(node: &Node, is_clip_path: bool, opt: &WriteOptions, xml: &mut 
     }
 }
 
-fn write_group_element(g: &Group, is_clip_path: bool, opt: &WriteOptions, xml: &mut XmlWriter<'_>) {
+fn write_group_element(g: &Group, is_clip_path: bool, opt: &WriteOptions, xml: &mut XmlWriter) {
     if is_clip_path {
         // The `clipPath` element in SVG doesn't allow groups, only shapes and text.
         // The problem is that in `usvg` we can set a `clip-path` only on groups.
@@ -931,7 +929,7 @@ trait XmlWriterExt {
     fn write_filter_transfer_function(&mut self, eid: EId, fe: &filter::TransferFunction);
 }
 
-impl XmlWriterExt for XmlWriter<'_> {
+impl XmlWriterExt for XmlWriter {
     #[inline(never)]
     fn start_svg_element(&mut self, id: EId) {
         let _ = self.start_element(id.to_str());
@@ -969,7 +967,6 @@ impl XmlWriterExt for XmlWriter<'_> {
 
         let _ = self.write_attribute_raw(id.to_str(), |buf| {
             buf.extend_from_slice(&[b'#', r1, r2, g1, g2, b1, b2]);
-            Ok(())
         });
     }
 
@@ -1002,7 +999,6 @@ impl XmlWriterExt for XmlWriter<'_> {
                 buf.push(b' ');
                 write_num(ts.ty, buf, opt.transforms_precision);
                 buf.extend_from_slice(b")");
-                Ok(())
             });
         }
     }
@@ -1035,7 +1031,6 @@ impl XmlWriterExt for XmlWriter<'_> {
             if !list.is_empty() {
                 buf.pop();
             }
-            Ok(())
         });
     }
 
@@ -1129,7 +1124,6 @@ impl XmlWriterExt for XmlWriter<'_> {
 
             let encoded = base64::engine::general_purpose::STANDARD.encode(data);
             buf.extend_from_slice(encoded.as_bytes());
-            Ok(())
         });
     }
 }
@@ -1189,7 +1183,7 @@ fn has_xlink(parent: &Group) -> bool {
     false
 }
 
-fn write_base_grad(g: &BaseGradient, opt: &WriteOptions, xml: &mut XmlWriter<'_>) {
+fn write_base_grad(g: &BaseGradient, opt: &WriteOptions, xml: &mut XmlWriter) {
     xml.write_units(AId::GradientUnits, g.units, Units::ObjectBoundingBox);
     xml.write_transform(AId::GradientTransform, g.transform, opt);
 
@@ -1217,7 +1211,7 @@ fn write_path(
     path_transform: Transform,
     clip_path: Option<&str>,
     opt: &WriteOptions,
-    xml: &mut XmlWriter<'_>,
+    xml: &mut XmlWriter,
 ) {
     xml.start_svg_element(EId::Path);
     if !path.id.is_empty() {
@@ -1299,13 +1293,12 @@ fn write_path(
         }
 
         buf.pop();
-        Ok(())
     });
 
     let _ = xml.end_element();
 }
 
-fn write_fill(fill: &Option<Fill>, is_clip_path: bool, opt: &WriteOptions, xml: &mut XmlWriter<'_>) {
+fn write_fill(fill: &Option<Fill>, is_clip_path: bool, opt: &WriteOptions, xml: &mut XmlWriter) {
     if let Some(fill) = fill {
         write_paint(AId::Fill, &fill.paint, opt, xml);
 
@@ -1327,7 +1320,7 @@ fn write_fill(fill: &Option<Fill>, is_clip_path: bool, opt: &WriteOptions, xml: 
     }
 }
 
-fn write_stroke(stroke: &Option<Stroke>, opt: &WriteOptions, xml: &mut XmlWriter<'_>) {
+fn write_stroke(stroke: &Option<Stroke>, opt: &WriteOptions, xml: &mut XmlWriter) {
     if let Some(stroke) = stroke {
         write_paint(AId::Stroke, &stroke.paint, opt, xml);
 
@@ -1371,7 +1364,7 @@ fn write_stroke(stroke: &Option<Stroke>, opt: &WriteOptions, xml: &mut XmlWriter
     }
 }
 
-fn write_paint(aid: AId, paint: &Paint, opt: &WriteOptions, xml: &mut XmlWriter<'_>) {
+fn write_paint(aid: AId, paint: &Paint, opt: &WriteOptions, xml: &mut XmlWriter) {
     match paint {
         Paint::Color(c) => xml.write_color(aid, *c),
         Paint::LinearGradient(lg) => {
@@ -1386,7 +1379,7 @@ fn write_paint(aid: AId, paint: &Paint, opt: &WriteOptions, xml: &mut XmlWriter<
     }
 }
 
-fn write_light_source(light: &filter::LightSource, xml: &mut XmlWriter<'_>) {
+fn write_light_source(light: &filter::LightSource, xml: &mut XmlWriter) {
     match light {
         filter::LightSource::DistantLight(light) => {
             xml.start_svg_element(EId::FeDistantLight);
@@ -1456,7 +1449,7 @@ fn write_num(num: f32, buf: &mut Vec<u8>, precision: u8) {
 fn write_span(
     is_clip_path: bool,
     opt: &WriteOptions,
-    xml: &mut XmlWriter<'_>,
+    xml: &mut XmlWriter,
     chunk: &TextChunk,
     span: &TextSpan,
 ) {
