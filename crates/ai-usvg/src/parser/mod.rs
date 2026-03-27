@@ -17,6 +17,7 @@ mod units;
 mod use_node;
 
 use alloc::boxed::Box;
+use alloc::vec::Vec;
 
 #[cfg(feature = "text")]
 mod text;
@@ -165,10 +166,10 @@ impl crate::Tree {
 }
 
 /// Decompresses an SVGZ file.
-pub fn decompress_svgz(data: &[u8]) -> Result<alloc::vec::Vec<u8>, Error> {
+pub fn decompress_svgz(data: &[u8]) -> Result<Vec<u8>, Error> {
     use no_std_io::io::Read;
     let mut decoder = flate2::read::GzDecoder::new(data);
-    let mut decoded = alloc::vec::Vec::new();
+    let mut decoded = Vec::new();
     decoder.read_to_end(&mut decoded).map_err(|_| Error::MalformedGZip)?;
     Ok(decoded)
 }
