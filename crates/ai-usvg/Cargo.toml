@@ -14,8 +14,7 @@ exclude = ["tests"]
 workspace = "../.."
 
 [[bin]]
-name = "usvg"
-path = "src/main.rs"
+name = "ai-usvg"
 required-features = ["text", "system-fonts", "memmap-fonts"]
 
 [dependencies]
