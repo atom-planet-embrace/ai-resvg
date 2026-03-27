@@ -384,11 +384,7 @@ impl DatabaseExt for Database {
         self.with_face_data(id, |data, face_index| -> Option<Tree> {
             let face = ttf_parser::Face::parse(data, face_index).ok()?;
 
-            let mut svg = xmlwriter::XmlWriter::new(xmlwriter::Options {
-                use_single_quote: false,
-                indent: xmlwriter::Indent::None,
-                attributes_indent: xmlwriter::Indent::None,
-            });
+            let mut svg = XmlWriter::new(xmlwriter::Options::default());
 
             svg.start_element("svg");
             svg.write_attribute("xmlns", "http://www.w3.org/2000/svg");
@@ -420,8 +416,7 @@ impl DatabaseExt for Database {
             )?;
             svg.end_element();
 
-            let svg_string = svg.end_document();
-            Tree::from_data(svg_string.as_bytes(), &Options::default()).ok()
+            Tree::from_data(svg.end_document().as_bytes(), &Options::default()).ok()
         })?
     }
 }
