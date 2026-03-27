@@ -6,22 +6,10 @@ use alloc::string::String;
 use alloc::string::ToString;
 use alloc::vec::Vec;
 use core::fmt::Display;
-
-/// Helper to write formatted data into a `Vec<u8>` without requiring `std::io::Write`.
-fn write_bytes_fmt(buf: &mut Vec<u8>, args: core::fmt::Arguments<'_>) {
-    use core::fmt::Write;
-    struct Adapter<'a>(&'a mut Vec<u8>);
-    impl core::fmt::Write for Adapter<'_> {
-        fn write_str(&mut self, s: &str) -> core::fmt::Result {
-            self.0.extend_from_slice(s.as_bytes());
-            Ok(())
-        }
-    }
-    Adapter(buf).write_fmt(args).unwrap();
-}
+use no_std_io::io::Write;
 
 use svgtypes::{FontFamily, parse_font_families};
-type XmlWriter = xmlwriter::XmlWriter;
+use xmlwriter::XmlWriter;
 
 use crate::parser::{AId, EId};
 use crate::*;
@@ -155,7 +143,7 @@ impl Default for WriteOptions {
 }
 
 pub(crate) fn convert(tree: &Tree, opt: &WriteOptions) -> String {
-    let mut xml = xmlwriter::XmlWriter::new(xmlwriter::Options {
+    let mut xml = XmlWriter::new(xmlwriter::Options {
         use_single_quote: opt.use_single_quote,
         indent: opt.indent,
         attributes_indent: opt.attributes_indent,
@@ -1025,7 +1013,7 @@ impl XmlWriterExt for XmlWriter {
     fn write_numbers(&mut self, aid: AId, list: &[f32]) {
         self.write_attribute_raw(aid.to_str(), |buf| {
             for n in list {
-                write_bytes_fmt(buf, format_args!("{} ", n));
+                write!(buf, "{} ", n).unwrap();
             }
 
             if !list.is_empty() {
@@ -1429,7 +1417,7 @@ static POW_VEC: &[f32] = &[
 fn write_num(num: f32, buf: &mut Vec<u8>, precision: u8) {
     // If number is an integer, it's faster to write it as i32.
     if (num - libm::truncf(num)).approx_zero_ulps(4) {
-        write_bytes_fmt(buf, format_args!("{}", num as i32));
+        write!(buf, "{}", num as i32).unwrap();
         return;
     }
 
@@ -1442,7 +1430,7 @@ fn write_num(num: f32, buf: &mut Vec<u8>, precision: u8) {
     // our output and tests reproducible.
     let v = libm::roundf(num * POW_VEC[precision as usize]) / POW_VEC[precision as usize];
 
-    write_bytes_fmt(buf, format_args!("{}", v));
+    write!(buf, "{}", v).unwrap();
 }
 
 /// Write all of the tspan attributes except for decorations.
