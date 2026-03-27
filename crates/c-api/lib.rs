@@ -11,6 +11,7 @@
 extern crate alloc;
 
 use alloc::boxed::Box;
+use alloc::string::String;
 use alloc::string::ToString;
 use alloc::vec::Vec;
 use core::ffi::CStr;
@@ -157,7 +158,7 @@ pub extern "C" fn resvg_options_set_resources_dir(opt: *mut resvg_options, path:
         }
         #[cfg(not(feature = "std"))]
         {
-            cast_opt(opt).resources_dir = Some(alloc::string::String::from(s));
+            cast_opt(opt).resources_dir = Some(String::from(s));
         }
     }
 }
