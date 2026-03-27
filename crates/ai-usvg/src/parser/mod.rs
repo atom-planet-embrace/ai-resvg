@@ -170,7 +170,9 @@ pub fn decompress_svgz(data: &[u8]) -> Result<Vec<u8>, Error> {
     use no_std_io::io::Read;
     let mut decoder = flate2::read::GzDecoder::new(data);
     let mut decoded = Vec::with_capacity(data.len() * 2);
-    decoder.read_to_end(&mut decoded).map_err(|_| Error::MalformedGZip)?;
+    decoder
+        .read_to_end(&mut decoded)
+        .map_err(|_| Error::MalformedGZip)?;
     Ok(decoded)
 }
 
