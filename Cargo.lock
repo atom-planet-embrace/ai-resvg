@@ -10,8 +10,9 @@ checksum = "320119579fcad9c21884f5c4861d16174d0e06250625266f50fe6898340abefa"
 
 [[package]]
 name = "ai-flate2"
-version = "1.1.10"
-source = "git+https://github.com/atom-planet-embrace/ai-flate2#79c788a5e30520d6231be030b6141c423ecebe09"
+version = "1.1.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5f4502116e12da304ed2f992902a18270ea3b9d2b1b791181dff93ce1d6560c7"
 dependencies = [
  "crc32fast",
  "miniz_oxide 0.9.1",
