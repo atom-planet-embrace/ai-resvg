@@ -3,13 +3,19 @@
 
 //! C bindings.
 
+#![no_std]
 #![allow(non_camel_case_types)]
 #![warn(missing_docs)]
 #![warn(missing_copy_implementations)]
 
-use std::ffi::CStr;
-use std::os::raw::c_char;
-use std::slice;
+extern crate alloc;
+
+use alloc::boxed::Box;
+use alloc::string::ToString;
+use alloc::vec::Vec;
+use core::ffi::CStr;
+use core::ffi::c_char;
+use core::slice;
 
 use resvg::tiny_skia;
 use resvg::usvg;
@@ -144,7 +150,15 @@ pub extern "C" fn resvg_options_set_resources_dir(opt: *mut resvg_options, path:
     if path.is_null() {
         cast_opt(opt).resources_dir = None;
     } else {
-        cast_opt(opt).resources_dir = Some(cstr_to_str(path).unwrap().into());
+        let s = cstr_to_str(path).unwrap();
+        #[cfg(feature = "std")]
+        {
+            cast_opt(opt).resources_dir = Some(s.into());
+        }
+        #[cfg(not(feature = "std"))]
+        {
+            cast_opt(opt).resources_dir = Some(alloc::string::String::from(s));
+        }
     }
 }
 
@@ -493,16 +507,21 @@ pub struct resvg_render_tree(pub usvg::Tree);
 ///
 /// See #resvg_is_image_empty for details.
 ///
+/// Requires the `std` feature for filesystem access.
+///
 /// @param file_path UTF-8 file path.
 /// @param opt Rendering options. Must not be NULL.
 /// @param tree Parsed render tree. Should be destroyed via #resvg_tree_destroy.
 /// @return #resvg_error
+#[cfg(feature = "std")]
 #[unsafe(no_mangle)]
 pub extern "C" fn resvg_parse_tree_from_file(
     file_path: *const c_char,
     opt: *const resvg_options,
     tree: *mut *mut resvg_render_tree,
 ) -> i32 {
+    extern crate std;
+
     let file_path = match cstr_to_str(file_path) {
         Some(v) => v,
         None => return resvg_error::NOT_AN_UTF8_STR as i32,
@@ -883,7 +902,7 @@ pub extern "C" fn resvg_render(
 
     let pixmap_len = width as usize * height as usize * tiny_skia::BYTES_PER_PIXEL;
     let pixmap: &mut [u8] =
-        unsafe { std::slice::from_raw_parts_mut(pixmap as *mut u8, pixmap_len) };
+        unsafe { core::slice::from_raw_parts_mut(pixmap as *mut u8, pixmap_len) };
     let mut pixmap = tiny_skia::PixmapMut::from_bytes(pixmap, width, height).unwrap();
 
     resvg::render(&tree.0, transform.to_tiny_skia(), &mut pixmap)
@@ -928,7 +947,7 @@ pub extern "C" fn resvg_render_node(
     if let Some(node) = tree.0.node_by_id(id) {
         let pixmap_len = width as usize * height as usize * tiny_skia::BYTES_PER_PIXEL;
         let pixmap: &mut [u8] =
-            unsafe { std::slice::from_raw_parts_mut(pixmap as *mut u8, pixmap_len) };
+            unsafe { core::slice::from_raw_parts_mut(pixmap as *mut u8, pixmap_len) };
         let mut pixmap = tiny_skia::PixmapMut::from_bytes(pixmap, width, height).unwrap();
 
         resvg::render_node(node, transform.to_tiny_skia(), &mut pixmap).is_some()
@@ -938,7 +957,9 @@ pub extern "C" fn resvg_render_node(
     }
 }
 
-/// A simple stderr logger.
+/// A simple no-op logger (no_std fallback).
+///
+/// With the `std` feature enabled, logs are printed to stderr.
 static LOGGER: SimpleLogger = SimpleLogger;
 struct SimpleLogger;
 impl log::Log for SimpleLogger {
@@ -947,7 +968,9 @@ impl log::Log for SimpleLogger {
     }
 
     fn log(&self, record: &log::Record) {
+        #[cfg(feature = "std")]
         if self.enabled(record.metadata()) {
+            extern crate std;
             let target = if record.target().len() > 0 {
                 record.target()
             } else {
@@ -958,11 +981,11 @@ impl log::Log for SimpleLogger {
             let args = record.args();
 
             match record.level() {
-                log::Level::Error => eprintln!("Error (in {}:{}): {}", target, line, args),
-                log::Level::Warn => eprintln!("Warning (in {}:{}): {}", target, line, args),
-                log::Level::Info => eprintln!("Info (in {}:{}): {}", target, line, args),
-                log::Level::Debug => eprintln!("Debug (in {}:{}): {}", target, line, args),
-                log::Level::Trace => eprintln!("Trace (in {}:{}): {}", target, line, args),
+                log::Level::Error => std::eprintln!("Error (in {}:{}): {}", target, line, args),
+                log::Level::Warn => std::eprintln!("Warning (in {}:{}): {}", target, line, args),
+                log::Level::Info => std::eprintln!("Info (in {}:{}): {}", target, line, args),
+                log::Level::Debug => std::eprintln!("Debug (in {}:{}): {}", target, line, args),
+                log::Level::Trace => std::eprintln!("Trace (in {}:{}): {}", target, line, args),
             }
         }
     }

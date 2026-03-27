@@ -1,6 +1,8 @@
 // Copyright 2019 the Resvg Authors
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
+use alloc::vec::Vec;
+
 use crate::render::Context;
 
 pub fn render(

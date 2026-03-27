@@ -44,7 +44,7 @@ fn transfer(func: &TransferFunction, c: u8) -> u8 {
         TransferFunction::Table(values) => {
             let n = values.len() - 1;
             let k = (c * (n as f32)).floor() as usize;
-            let k = std::cmp::min(k, n);
+            let k = core::cmp::min(k, n);
             if k == n {
                 values[k]
             } else {
@@ -58,7 +58,7 @@ fn transfer(func: &TransferFunction, c: u8) -> u8 {
         TransferFunction::Discrete(values) => {
             let n = values.len();
             let k = (c * (n as f32)).floor() as usize;
-            values[std::cmp::min(k, n - 1)]
+            values[core::cmp::min(k, n - 1)]
         }
         TransferFunction::Linear { slope, intercept } => slope * c + intercept,
         TransferFunction::Gamma {

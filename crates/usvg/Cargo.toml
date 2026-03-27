@@ -52,12 +52,12 @@ unicode-vo = { version = "0.1", optional = true }
 once_cell = "1.21"
 
 [features]
-default = ["text", "system-fonts", "memmap-fonts"]
+default = ["text"]
 std = ["no_std_io/std"]
 # Enables text-to-path conversion support.
 # Adds around 400KiB to your binary.
 text = ["fontdb", "rustybuzz", "ttf-parser", "unicode-bidi", "unicode-script", "unicode-vo"]
-# Enables system fonts loading.
-system-fonts = ["fontdb/fs", "fontdb/fontconfig"]
-# Enables font files memmaping for faster loading.
-memmap-fonts = ["fontdb/memmap"]
+# Enables system fonts loading. Requires std.
+system-fonts = ["std", "fontdb/fs", "fontdb/fontconfig"]
+# Enables font files memmaping for faster loading. Requires std.
+memmap-fonts = ["std", "fontdb/memmap"]

@@ -7,7 +7,7 @@
 
 use super::ImageRefMut;
 use rgb::RGBA8;
-use std::cmp;
+use core::cmp;
 
 const STEPS: usize = 5;
 

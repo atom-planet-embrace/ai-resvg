@@ -14,18 +14,21 @@ crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
 log = "0.4"
+no_std_io = { version = "0.6", default-features = false }
 resvg = { path = "../resvg", default-features = false }
 
 [features]
-default = ["text", "system-fonts", "memmap-fonts", "raster-images"]
+default = ["text"]
+std = ["no_std_io/std", "resvg/std"]
 # enables SVG Text support
 # adds around 500KiB to your binary
 text = ["resvg/text"]
-# enables system fonts loading (only for `text`)
-system-fonts = ["resvg/system-fonts"]
-# enables font files memmaping for faster loading (only for `text`)
-memmap-fonts = ["resvg/memmap-fonts"]
-raster-images = ["resvg/raster-images"]
+# enables system fonts loading (only for `text`). Requires std.
+system-fonts = ["std", "resvg/system-fonts"]
+# enables font files memmaping for faster loading (only for `text`). Requires std.
+memmap-fonts = ["std", "resvg/memmap-fonts"]
+# Requires std.
+raster-images = ["std", "resvg/raster-images"]
 capi = []
 
 [package.metadata.capi.header]

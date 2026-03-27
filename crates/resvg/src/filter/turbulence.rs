@@ -3,6 +3,9 @@
 
 #![allow(clippy::needless_range_loop)]
 
+use alloc::vec;
+use alloc::vec::Vec;
+
 use super::{ImageRefMut, f32_bound};
 use usvg::ApproxZeroUlps;
 

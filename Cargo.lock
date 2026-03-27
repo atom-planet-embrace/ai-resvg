@@ -505,6 +505,7 @@ dependencies = [
  "gif",
  "image-webp",
  "log",
+ "no_std_io",
  "once_cell",
  "pico-args",
  "png",
@@ -520,6 +521,7 @@ name = "resvg-capi"
 version = "0.47.0"
 dependencies = [
  "log",
+ "no_std_io",
  "resvg",
 ]
 

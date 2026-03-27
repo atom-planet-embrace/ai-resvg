@@ -1,7 +1,11 @@
 // Copyright 2018 the Resvg Authors
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
-use std::rc::Rc;
+use alloc::rc::Rc;
+use alloc::string::String;
+use alloc::string::ToString;
+use alloc::vec;
+use alloc::vec::Vec;
 
 use rgb::{FromSlice, RGBA8};
 use tiny_skia::IntRect;
@@ -1058,7 +1062,7 @@ fn transform_light_source(
     region: IntRect,
     ts: usvg::Transform,
 ) -> usvg::filter::LightSource {
-    use std::f32::consts::SQRT_2;
+    use core::f32::consts::SQRT_2;
     use usvg::filter::LightSource;
 
     match &mut source {

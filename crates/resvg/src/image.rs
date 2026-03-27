@@ -55,8 +55,11 @@ fn render_vector(
 
 #[cfg(feature = "raster-images")]
 mod raster_images {
+    extern crate std;
+
+    use alloc::vec;
+
     use crate::OptionLog;
-    use std::io::Cursor;
     use usvg::ImageRendering;
 
     fn decode_raster(image: &usvg::ImageKind) -> Option<tiny_skia::Pixmap> {
@@ -85,7 +88,7 @@ mod raster_images {
         use zune_jpeg::zune_core::colorspace::ColorSpace;
         use zune_jpeg::zune_core::options::DecoderOptions;
 
-        let cursor = Cursor::new(data);
+        let cursor = std::io::Cursor::new(data);
         let options = DecoderOptions::default().jpeg_set_out_colorspace(ColorSpace::RGBA);
         let mut decoder = zune_jpeg::JpegDecoder::new_with_options(cursor, options);
         decoder.decode_headers().ok()?;

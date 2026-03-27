@@ -1,6 +1,8 @@
 // Copyright 2020 the Resvg Authors
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
+use alloc::vec;
+
 use super::ImageRefMut;
 use rgb::RGBA8;
 use usvg::filter::MorphologyOperator;
@@ -14,8 +16,8 @@ use usvg::filter::MorphologyOperator;
 /// This method will allocate a copy of the `src` image as a back buffer.
 pub fn apply(operator: MorphologyOperator, rx: f32, ry: f32, src: ImageRefMut) {
     // No point in making matrix larger than image.
-    let columns = std::cmp::min(rx.ceil() as u32 * 2, src.width);
-    let rows = std::cmp::min(ry.ceil() as u32 * 2, src.height);
+    let columns = core::cmp::min(rx.ceil() as u32 * 2, src.width);
+    let rows = core::cmp::min(ry.ceil() as u32 * 2, src.height);
     let target_x = (columns as f32 / 2.0).floor() as u32;
     let target_y = (rows as f32 / 2.0).floor() as u32;
 
@@ -46,15 +48,15 @@ pub fn apply(operator: MorphologyOperator, rx: f32, ry: f32, src: ImageRefMut) {
 
                 let p = src.pixel_at(tx as u32, ty as u32);
                 if operator == MorphologyOperator::Erode {
-                    new_p.r = std::cmp::min(p.r, new_p.r);
-                    new_p.g = std::cmp::min(p.g, new_p.g);
-                    new_p.b = std::cmp::min(p.b, new_p.b);
-                    new_p.a = std::cmp::min(p.a, new_p.a);
+                    new_p.r = core::cmp::min(p.r, new_p.r);
+                    new_p.g = core::cmp::min(p.g, new_p.g);
+                    new_p.b = core::cmp::min(p.b, new_p.b);
+                    new_p.a = core::cmp::min(p.a, new_p.a);
                 } else {
-                    new_p.r = std::cmp::max(p.r, new_p.r);
-                    new_p.g = std::cmp::max(p.g, new_p.g);
-                    new_p.b = std::cmp::max(p.b, new_p.b);
-                    new_p.a = std::cmp::max(p.a, new_p.a);
+                    new_p.r = core::cmp::max(p.r, new_p.r);
+                    new_p.g = core::cmp::max(p.g, new_p.g);
+                    new_p.b = core::cmp::max(p.b, new_p.b);
+                    new_p.a = core::cmp::max(p.a, new_p.a);
                 }
             }
         }

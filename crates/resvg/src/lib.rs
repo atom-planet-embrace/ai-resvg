@@ -5,6 +5,7 @@
 [resvg](https://github.com/linebender/resvg) is an SVG rendering library.
 */
 
+#![no_std]
 #![forbid(unsafe_code)]
 #![warn(missing_docs)]
 #![allow(clippy::field_reassign_with_default)]
@@ -13,6 +14,8 @@
 #![allow(clippy::uninlined_format_args)]
 #![allow(clippy::upper_case_acronyms)]
 #![allow(clippy::wrong_self_convention)]
+
+extern crate alloc;
 
 pub use tiny_skia;
 pub use usvg;
