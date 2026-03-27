@@ -384,22 +384,21 @@ impl DatabaseExt for Database {
         self.with_face_data(id, |data, face_index| -> Option<Tree> {
             let face = ttf_parser::Face::parse(data, face_index).ok()?;
 
-            let mut svg = XmlWriter::new(Vec::new(), xmlwriter::Options {
+            let mut svg = xmlwriter::XmlWriter::new(xmlwriter::Options {
                 use_single_quote: false,
                 indent: xmlwriter::Indent::None,
                 attributes_indent: xmlwriter::Indent::None,
-                enable_self_closing: true,
             });
 
-            let _ = svg.start_element("svg");
-            let _ = svg.write_attribute("xmlns", "http://www.w3.org/2000/svg");
-            let _ = svg.write_attribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+            svg.start_element("svg");
+            svg.write_attribute("xmlns", "http://www.w3.org/2000/svg");
+            svg.write_attribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
 
             let mut path_buf = String::with_capacity(256);
             let gradient_index = 1;
             let clip_path_index = 1;
 
-            let _ = svg.start_element("g");
+            svg.start_element("g");
 
             let mut glyph_painter = GlyphPainter {
                 face: &face,
@@ -419,10 +418,10 @@ impl DatabaseExt for Database {
                 RgbaColor::new(0, 0, 0, 255),
                 &mut glyph_painter,
             )?;
-            let _ = svg.end_element();
+            svg.end_element();
 
-            let buf = svg.end_document().expect("XML writing to Vec<u8> should not fail");
-            Tree::from_data(&buf, &Options::default()).ok()
+            let svg_string = svg.end_document();
+            Tree::from_data(svg_string.as_bytes(), &Options::default()).ok()
         })?
     }
 }
