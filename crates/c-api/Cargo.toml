@@ -1,5 +1,6 @@
 [package]
-name = "resvg-capi"
+name = "ai-resvg-capi"
+description = "A no_std fork of resvg-capi"
 version = "0.47.0"
 keywords = ["svg", "render", "raster", "c-api"]
 license.workspace = true
@@ -15,7 +16,7 @@ crate-type = ["cdylib", "staticlib"]
 [dependencies]
 log = "0.4"
 no_std_io = { version = "0.6", default-features = false }
-resvg = { path = "../resvg", default-features = false }
+resvg = { package = "ai-resvg", path = "../resvg", default-features = false }
 
 [features]
 default = ["text"]

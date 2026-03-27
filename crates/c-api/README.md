@@ -1,3 +1,5 @@
+This is a fork of the [resvg-capi](https://crates.io/crates/resvg-capi) crate. The git repository is located at https://github.com/linebender/resvg.
+
 # C API for resvg
 
 ## Build

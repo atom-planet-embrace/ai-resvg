@@ -1,12 +1,12 @@
 [package]
-name = "resvg"
+name = "ai-resvg"
 version = "0.47.0"
 keywords = ["svg", "render", "raster"]
 license.workspace = true
 edition = "2024"
 rust-version = "1.87.0"
-description = "An SVG rendering library."
-repository = "https://github.com/linebender/resvg"
+description = "A no_std fork of resvg"
+repository = "https://github.com/atom-planet-embrace/ai-resvg"
 exclude = ["tests"]
 workspace = "../.."
 
@@ -24,7 +24,7 @@ pico-args = { version = "0.5", features = ["eq-separator"], optional = true }
 rgb = "0.8"
 svgtypes = { version = "0.16.1", default-features = false, features = ["libm"] }
 tiny-skia = { version = "0.12.0", default-features = false, features = ["no-std-float"] }
-usvg = { path = "../usvg", version = "0.47.0", default-features = false }
+usvg = { package = "ai-usvg", path = "../usvg", version = "0.47.0", default-features = false }
 zune-jpeg = { version = "0.5.8", optional = true }
 
 [dev-dependencies]

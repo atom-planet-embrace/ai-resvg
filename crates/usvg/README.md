@@ -1,3 +1,5 @@
+This is a fork of the [usvg](https://crates.io/crates/usvg) crate. The git repository is located at https://github.com/linebender/resvg.
+
 # usvg
 [![Crates.io](https://img.shields.io/crates/v/usvg.svg)](https://crates.io/crates/usvg)
 [![Documentation](https://docs.rs/usvg/badge.svg)](https://docs.rs/usvg)

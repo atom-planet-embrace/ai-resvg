@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
 /*!
-[resvg](https://github.com/linebender/resvg) is an SVG rendering library.
+[ai-resvg](https://github.com/atom-planet-embrace/ai-resvg) is an SVG rendering library.
 */
 
 #![no_std]
