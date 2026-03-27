@@ -148,7 +148,7 @@ The [Rust code of conduct] applies.
 
 Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in the work by you, as defined in the Apache-2.0 license, shall be licensed as above, without any additional terms or conditions.
 
-[usvg]: https://github.com/atom-planet-embrace/ai-resvg/tree/main/crates/usvg
+[usvg]: https://github.com/atom-planet-embrace/ai-resvg/tree/main/crates/ai-usvg
 [rustybuzz]: https://github.com/harfbuzz/rustybuzz
 [tiny-skia]: https://github.com/linebender/tiny-skia
 [ttf-parser]: https://github.com/harfbuzz/ttf-parser

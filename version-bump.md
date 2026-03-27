@@ -1,8 +1,8 @@
 - .github/chart.svg
 - .github/chart-svg2.svg
 - CHANGELOG.md
-- crates/usvg/Cargo.toml
-- crates/resvg/Cargo.toml
+- crates/ai-usvg/Cargo.toml
+- crates/ai-resvg/Cargo.toml
 - crates/c-api/Cargo.toml
 - crates/c-api/resvg.h
 - crates/c-api/ResvgQt.h

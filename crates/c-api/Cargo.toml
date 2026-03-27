@@ -16,7 +16,7 @@ crate-type = ["cdylib", "staticlib"]
 [dependencies]
 log = "0.4"
 no_std_io = { version = "0.6", default-features = false }
-resvg = { package = "ai-resvg", path = "../resvg", default-features = false }
+resvg = { package = "ai-resvg", path = "../ai-resvg", default-features = false }
 
 [features]
 default = ["text"]

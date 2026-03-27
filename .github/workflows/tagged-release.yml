@@ -43,7 +43,7 @@ jobs:
         run: cargo build --release --features std,system-fonts,memmap-fonts
 
       - name: Build usvg
-        working-directory: crates/usvg
+        working-directory: crates/ai-usvg
         run: cargo build --release --features std,system-fonts,memmap-fonts
 
       - name: Collect
@@ -101,7 +101,7 @@ jobs:
         run: cargo build --release --features std,system-fonts,memmap-fonts
 
       - name: Build usvg
-        working-directory: crates/usvg
+        working-directory: crates/ai-usvg
         env:
           RUSTFLAGS: -Ctarget-feature=+crt-static # make sure it's static
         run: cargo build --release --features std,system-fonts,memmap-fonts
@@ -163,7 +163,7 @@ jobs:
         run: cargo build --release --features std,system-fonts,memmap-fonts
 
       - name: Build usvg
-        working-directory: crates/usvg
+        working-directory: crates/ai-usvg
         run: cargo build --release --features std,system-fonts,memmap-fonts
 
       - name: Compress
@@ -205,7 +205,7 @@ jobs:
         run: cargo build --release --features std,system-fonts,memmap-fonts
 
       - name: Build usvg
-        working-directory: crates/usvg
+        working-directory: crates/ai-usvg
         run: cargo build --release --features std,system-fonts,memmap-fonts
 
       - name: Compress

@@ -49,11 +49,11 @@ jobs:
       run: cargo build --no-default-features
 
     - name: Build resvg without default support
-      working-directory: crates/resvg
+      working-directory: crates/ai-resvg
       run: cargo check --no-default-features
 
     - name: Build usvg without default support
-      working-directory: crates/usvg
+      working-directory: crates/ai-usvg
       run: cargo check --no-default-features
 
   no-std:
@@ -67,11 +67,11 @@ jobs:
       run: rustup target add thumbv7m-none-eabi
 
     - name: Build usvg (no_std)
-      working-directory: crates/usvg
+      working-directory: crates/ai-usvg
       run: cargo build --target thumbv7m-none-eabi --no-default-features
 
     - name: Build resvg (no_std)
-      working-directory: crates/resvg
+      working-directory: crates/ai-resvg
       run: cargo build --target thumbv7m-none-eabi --no-default-features
 
   msrv:
