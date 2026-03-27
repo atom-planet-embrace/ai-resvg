@@ -43,7 +43,7 @@ fn transfer(func: &TransferFunction, c: u8) -> u8 {
         TransferFunction::Identity => c,
         TransferFunction::Table(values) => {
             let n = values.len() - 1;
-            let k = (c * (n as f32)).floor() as usize;
+            let k = libm::floorf(c * (n as f32)) as usize;
             let k = core::cmp::min(k, n);
             if k == n {
                 values[k]
@@ -57,7 +57,7 @@ fn transfer(func: &TransferFunction, c: u8) -> u8 {
         }
         TransferFunction::Discrete(values) => {
             let n = values.len();
-            let k = (c * (n as f32)).floor() as usize;
+            let k = libm::floorf(c * (n as f32)) as usize;
             values[core::cmp::min(k, n - 1)]
         }
         TransferFunction::Linear { slope, intercept } => slope * c + intercept,
@@ -65,7 +65,7 @@ fn transfer(func: &TransferFunction, c: u8) -> u8 {
             amplitude,
             exponent,
             offset,
-        } => amplitude * c.powf(*exponent) + offset,
+        } => amplitude * libm::powf(c, *exponent) + offset,
     };
 
     (f32_bound(0.0, c, 1.0) * 255.0) as u8

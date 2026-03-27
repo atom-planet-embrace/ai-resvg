@@ -1,6 +1,7 @@
 // Copyright 2019 the Resvg Authors
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
+use alloc::boxed::Box;
 use alloc::string::String;
 use alloc::string::ToString;
 use alloc::sync::Arc;

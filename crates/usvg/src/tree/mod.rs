@@ -11,7 +11,7 @@ use alloc::sync::Arc;
 use alloc::vec::Vec;
 use core::fmt::Display;
 
-pub use strict_num::{self, ApproxEqUlps, NonZeroPositiveF32, NormalizedF32, PositiveF32};
+pub use strict_num::{self, NonZeroPositiveF32, NormalizedF32, PositiveF32};
 
 pub use tiny_skia_path;
 

@@ -16,10 +16,10 @@ use usvg::filter::MorphologyOperator;
 /// This method will allocate a copy of the `src` image as a back buffer.
 pub fn apply(operator: MorphologyOperator, rx: f32, ry: f32, src: ImageRefMut) {
     // No point in making matrix larger than image.
-    let columns = core::cmp::min(rx.ceil() as u32 * 2, src.width);
-    let rows = core::cmp::min(ry.ceil() as u32 * 2, src.height);
-    let target_x = (columns as f32 / 2.0).floor() as u32;
-    let target_y = (rows as f32 / 2.0).floor() as u32;
+    let columns = core::cmp::min(libm::ceilf(rx) as u32 * 2, src.width);
+    let rows = core::cmp::min(libm::ceilf(ry) as u32 * 2, src.height);
+    let target_x = libm::floorf(columns as f32 / 2.0) as u32;
+    let target_y = libm::floorf(rows as f32 / 2.0) as u32;
 
     let width_max = src.width as i32 - 1;
     let height_max = src.height as i32 - 1;

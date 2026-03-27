@@ -55,8 +55,8 @@ pub(crate) fn convert_length(
                     | AId::Y1
                     | AId::Y2 => convert_percent(length, view_box.height()),
                     _ => {
-                        let mut vb_len = view_box.width().powi(2) + view_box.height().powi(2);
-                        vb_len = (vb_len / 2.0).sqrt();
+                        let mut vb_len = libm::powf(view_box.width(), 2.0) + libm::powf(view_box.height(), 2.0);
+                        vb_len = libm::sqrtf(vb_len / 2.0);
                         convert_percent(length, vb_len)
                     }
                 }
@@ -142,5 +142,5 @@ fn convert_named_font_size(name: &str, parent_font_size: f32) -> f32 {
     };
 
     // 'On a computer screen a scaling factor of 1.2 is suggested between adjacent indexes.'
-    parent_font_size * 1.2f32.powi(factor)
+    parent_font_size * libm::powf(1.2f32, factor as f32)
 }

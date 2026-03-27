@@ -652,7 +652,7 @@ fn convert_composite(fe: SvgNode, primitives: &[Primitive]) -> Kind {
 
 fn convert_convolve_matrix(fe: SvgNode, primitives: &[Primitive]) -> Option<Kind> {
     fn parse_target(target: Option<f32>, order: u32) -> Option<u32> {
-        let default_target = (order as f32 / 2.0).floor() as u32;
+        let default_target = libm::floorf(order as f32 / 2.0) as u32;
         let target = target.unwrap_or(default_target as f32) as i32;
         if target < 0 || target >= order as i32 {
             None
@@ -682,7 +682,7 @@ fn convert_convolve_matrix(fe: SvgNode, primitives: &[Primitive]) -> Option<Kind
 
     let mut kernel_sum: f32 = matrix.iter().sum();
     // Round up to prevent float precision issues.
-    kernel_sum = (kernel_sum * 1_000_000.0).round() / 1_000_000.0;
+    kernel_sum = libm::roundf(kernel_sum * 1_000_000.0) / 1_000_000.0;
     if kernel_sum.approx_zero_ulps(4) {
         kernel_sum = 1.0;
     }
@@ -1082,8 +1082,8 @@ fn convert_turbulence(fe: SvgNode) -> Kind {
     Kind::Turbulence(Turbulence {
         base_frequency_x,
         base_frequency_y,
-        num_octaves: num_octaves.round() as u32,
-        seed: fe.attribute::<f32>(AId::Seed).unwrap_or(0.0).trunc() as i32,
+        num_octaves: libm::roundf(num_octaves) as u32,
+        seed: libm::truncf(fe.attribute::<f32>(AId::Seed).unwrap_or(0.0)) as i32,
         stitch_tiles: fe.attribute(AId::StitchTiles) == Some("stitch"),
         kind,
     })

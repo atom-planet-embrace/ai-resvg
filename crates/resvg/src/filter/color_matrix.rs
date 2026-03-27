@@ -53,8 +53,8 @@ pub fn apply(matrix: &ColorMatrix, src: ImageRefMut) {
         }
         ColorMatrix::HueRotate(angle) => {
             let angle = angle.to_radians();
-            let a1 = angle.cos();
-            let a2 = angle.sin();
+            let a1 = libm::cosf(angle);
+            let a2 = libm::sinf(angle);
             let m = [
                 0.213 + 0.787 * a1 - 0.213 * a2,
                 0.715 - 0.715 * a1 - 0.715 * a2,

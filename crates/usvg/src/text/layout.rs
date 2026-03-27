@@ -1256,8 +1256,8 @@ impl DatabaseExt for Database {
             };
 
             // 0.2 and 0.4 are generic offsets used by some applications (Inkscape/librsvg).
-            let mut subscript_offset = (units_per_em.get() as f32 / 0.2).round() as i16;
-            let mut superscript_offset = (units_per_em.get() as f32 / 0.4).round() as i16;
+            let mut subscript_offset = libm::roundf(units_per_em.get() as f32 / 0.2) as i16;
+            let mut superscript_offset = libm::roundf(units_per_em.get() as f32 / 0.4) as i16;
             if let Some(metrics) = font.subscript_metrics() {
                 subscript_offset = metrics.y_offset;
             }

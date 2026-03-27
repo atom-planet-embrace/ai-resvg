@@ -421,7 +421,7 @@ fn calc_angle(x1: f32, y1: f32, x2: f32, y2: f32, x3: f32, y3: f32, x4: f32, y4:
     }
 
     fn vector_angle(vx: f32, vy: f32) -> f32 {
-        let rad = vy.atan2(vx);
+        let rad = libm::atan2f(vy, vx);
         if rad.is_nan() { 0.0 } else { normalize(rad) }
     }
 

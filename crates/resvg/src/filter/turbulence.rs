@@ -114,8 +114,7 @@ fn init(mut seed: i32) -> (Vec<usize>, Vec<Vec<Vec<f64>>>) {
                     ((seed % (B_SIZE_32 + B_SIZE_32)) - B_SIZE_32) as f64 / B_SIZE_32 as f64;
             }
 
-            let s = (gradient[k][i][0] * gradient[k][i][0] + gradient[k][i][1] * gradient[k][i][1])
-                .sqrt();
+            let s = libm::sqrt(gradient[k][i][0] * gradient[k][i][0] + gradient[k][i][1] * gradient[k][i][1]);
 
             gradient[k][i][0] /= s;
             gradient[k][i][1] /= s;
@@ -163,8 +162,8 @@ fn turbulence(
         // When stitching tiled turbulence, the frequencies must be adjusted
         // so that the tile borders will be continuous.
         if !base_freq_x.approx_zero_ulps(4) {
-            let lo_freq = (tile_width * base_freq_x).floor() / tile_width;
-            let hi_freq = (tile_width * base_freq_x).ceil() / tile_width;
+            let lo_freq = libm::floor(tile_width * base_freq_x) / tile_width;
+            let hi_freq = libm::ceil(tile_width * base_freq_x) / tile_width;
             if base_freq_x / lo_freq < hi_freq / base_freq_x {
                 base_freq_x = lo_freq;
             } else {
@@ -173,8 +172,8 @@ fn turbulence(
         }
 
         if !base_freq_y.approx_zero_ulps(4) {
-            let lo_freq = (tile_height * base_freq_y).floor() / tile_height;
-            let hi_freq = (tile_height * base_freq_y).ceil() / tile_height;
+            let lo_freq = libm::floor(tile_height * base_freq_y) / tile_height;
+            let hi_freq = libm::ceil(tile_height * base_freq_y) / tile_height;
             if base_freq_y / lo_freq < hi_freq / base_freq_y {
                 base_freq_y = lo_freq;
             } else {
@@ -205,7 +204,7 @@ fn turbulence(
         if fractal_sum {
             sum += noise2(color_channel, x, y, lattice_selector, gradient, stitch) / ratio;
         } else {
-            sum += noise2(color_channel, x, y, lattice_selector, gradient, stitch).abs() / ratio;
+            sum += libm::fabs(noise2(color_channel, x, y, lattice_selector, gradient, stitch)) / ratio;
         }
         x *= 2.0;
         y *= 2.0;

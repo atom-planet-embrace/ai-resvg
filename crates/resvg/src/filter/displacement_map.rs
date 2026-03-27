@@ -44,8 +44,8 @@ pub fn apply(
 
         let dx = calc_offset(fe.x_channel_selector());
         let dy = calc_offset(fe.y_channel_selector());
-        let ox = (x as f32 + dx * sx * fe.scale()).round() as i32;
-        let oy = (y as f32 + dy * sy * fe.scale()).round() as i32;
+        let ox = libm::roundf(x as f32 + dx * sx * fe.scale()) as i32;
+        let oy = libm::roundf(y as f32 + dy * sy * fe.scale()) as i32;
 
         // TODO: we should use some kind of anti-aliasing when offset is on a pixel border
 

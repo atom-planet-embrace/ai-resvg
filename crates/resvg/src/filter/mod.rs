@@ -1072,10 +1072,10 @@ fn transform_light_source(
             ts.map_point(&mut point);
             light.x = point.x - region.x() as f32;
             light.y = point.y - region.y() as f32;
-            light.z = light.z * (ts.sx * ts.sx + ts.sy * ts.sy).sqrt() / SQRT_2;
+            light.z = light.z * libm::sqrtf(ts.sx * ts.sx + ts.sy * ts.sy) / SQRT_2;
         }
         LightSource::SpotLight(light) => {
-            let sz = (ts.sx * ts.sx + ts.sy * ts.sy).sqrt() / SQRT_2;
+            let sz = libm::sqrtf(ts.sx * ts.sx + ts.sy * ts.sy) / SQRT_2;
 
             let mut point = tiny_skia::Point::from_xy(light.x, light.y);
             ts.map_point(&mut point);

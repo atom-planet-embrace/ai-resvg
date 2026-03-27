@@ -39,8 +39,8 @@ fn create_box_gauss(sigma: f32) -> [i32; STEPS] {
         let n_float = STEPS as f32;
 
         // Ideal averaging filter width
-        let w_ideal = (12.0 * sigma * sigma / n_float).sqrt() + 1.0;
-        let mut wl = w_ideal.floor() as i32;
+        let w_ideal = libm::sqrtf(12.0 * sigma * sigma / n_float) + 1.0;
+        let mut wl = libm::floorf(w_ideal) as i32;
         if wl % 2 == 0 {
             wl -= 1;
         }
@@ -53,7 +53,7 @@ fn create_box_gauss(sigma: f32) -> [i32; STEPS] {
             - 4.0 * n_float * wl_float
             - 3.0 * n_float)
             / (-4.0 * wl_float - 4.0);
-        let m = m_ideal.round() as usize;
+        let m = libm::roundf(m_ideal) as usize;
 
         let mut sizes = [0; STEPS];
         for i in 0..STEPS {

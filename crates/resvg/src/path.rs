@@ -190,8 +190,8 @@ fn render_pattern_pixmap(
 
     let rect = pattern.rect();
     let img_size = tiny_skia::IntSize::from_wh(
-        (rect.width() * sx).round() as u32,
-        (rect.height() * sy).round() as u32,
+        libm::roundf(rect.width() * sx) as u32,
+        libm::roundf(rect.height() * sy) as u32,
     )?;
     let mut pixmap = tiny_skia::Pixmap::new(img_size.width(), img_size.height())?;
 

@@ -61,7 +61,7 @@ impl Vector3 {
 
     #[inline]
     fn length(&self) -> f32 {
-        (self.x * self.x + self.y * self.y + self.z * self.z).sqrt()
+        libm::sqrtf(self.x * self.x + self.y * self.y + self.z * self.z)
     }
 
     #[inline]
@@ -197,7 +197,7 @@ pub fn specular_lighting(
             if fe.specular_exponent().approx_eq_ulps(&1.0, 4) {
                 n_dot_h
             } else {
-                n_dot_h.powf(fe.specular_exponent())
+                libm::powf(n_dot_h, fe.specular_exponent())
             }
         } else {
             let mut n = normal.normal * (fe.surface_scale() / 255.0);
@@ -210,7 +210,7 @@ pub fn specular_lighting(
             if fe.specular_exponent().approx_eq_ulps(&1.0, 4) {
                 n_dot_h
             } else {
-                n_dot_h.powf(fe.specular_exponent())
+                libm::powf(n_dot_h, fe.specular_exponent())
             }
         };
 
@@ -250,9 +250,9 @@ fn apply(
             let azimuth = light.azimuth.to_radians();
             let elevation = light.elevation.to_radians();
             Vector3::new(
-                azimuth.cos() * elevation.cos(),
-                azimuth.sin() * elevation.cos(),
-                elevation.sin(),
+                libm::cosf(azimuth) * libm::cosf(elevation),
+                libm::sinf(azimuth) * libm::cosf(elevation),
+                libm::sinf(elevation),
             )
         }
         _ => Vector3::new(1.0, 1.0, 1.0),
@@ -324,12 +324,12 @@ fn light_color(light: &LightSource, lighting_color: Color, light_vector: Vector3
             }
 
             if let Some(limiting_cone_angle) = light.limiting_cone_angle {
-                if minus_l_dot_s < limiting_cone_angle.to_radians().cos() {
+                if minus_l_dot_s < libm::cosf(limiting_cone_angle.to_radians()) {
                     return Color::black();
                 }
             }
 
-            let factor = minus_l_dot_s.powf(light.specular_exponent.get());
+            let factor = libm::powf(minus_l_dot_s, light.specular_exponent.get());
             let compute = |x| (f32_bound(0.0, x as f32 * factor, 255.0) + 0.5) as u8;
 
             Color::new_rgb(

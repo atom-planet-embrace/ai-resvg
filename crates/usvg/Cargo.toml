@@ -18,25 +18,26 @@ name = "usvg"
 required-features = ["text", "system-fonts", "memmap-fonts"]
 
 [dependencies]
-base64 = "0.22" # for embedded images
+base64 = { version = "0.22", default-features = false, features = ["alloc"] } # for embedded images
 hashbrown = "0.15"
-log = "0.4"
+libm = "0.2"
+log = { version = "0.4", default-features = false }
 miniz_oxide = "0.8"
-no_std_io = { version = "0.6", default-features = false }
-pico-args = { version = "0.5", features = ["eq-separator"] }
-strict-num = "0.1.1"
-svgtypes = "0.16.1"
-tiny-skia-path = "0.12.0"
-xmlwriter = "0.1"
+no_std_io = { version = "0.6", default-features = false, features = ["alloc"] }
+pico-args = { version = "0.5", features = ["eq-separator"], optional = true }
+strict-num = { version = "0.1.1", default-features = false }
+svgtypes = { version = "0.16.1", default-features = false, features = ["libm"] }
+tiny-skia-path = { version = "0.12.0", default-features = false, features = ["no-std-float"] }
+xmlwriter = { package = "ai-xmlwriter", version = "0.1", default-features = false }
 
 # parser
-data-url = "0.3" # for href parsing
-flate2 = { version = "1.1", default-features = false, features = ["rust_backend"] } # SVGZ decoding
-imagesize = "0.14.0" # raster images size detection
-kurbo = "0.13.0" # Bezier curves utils
-roxmltree = "0.21.1"
-simplecss = "0.2"
-siphasher = "1.0" # perfect hash implementation
+data-url = { version = "0.3", default-features = false, features = ["alloc"] } # for href parsing
+# flate2 removed — using miniz_oxide directly for no_std SVGZ decompression
+imagesize = { package = "ai-imagesize", version = "0.14.0", features = ["gif", "jpeg", "png", "webp"] } # raster images size detection
+kurbo = { version = "0.13.0", default-features = false, features = ["libm"] } # Bezier curves utils
+roxmltree = { version = "0.21.1", default-features = false }
+simplecss = { version = "0.2", default-features = false }
+siphasher = { version = "1.0", default-features = false } # perfect hash implementation
 
 # text
 fontdb = { version = "0.23.0", default-features = false, optional = true }
@@ -53,7 +54,7 @@ once_cell = "1.21"
 
 [features]
 default = ["text"]
-std = ["no_std_io/std"]
+std = ["no_std_io/std", "log/std", "base64/std", "svgtypes/std", "roxmltree/std", "simplecss/std", "siphasher/std", "kurbo/std", "data-url/std", "dep:pico-args"]
 # Enables text-to-path conversion support.
 # Adds around 400KiB to your binary.
 text = ["fontdb", "rustybuzz", "ttf-parser", "unicode-bidi", "unicode-script", "unicode-vo"]

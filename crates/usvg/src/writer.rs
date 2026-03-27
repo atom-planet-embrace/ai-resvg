@@ -21,7 +21,7 @@ fn write_bytes_fmt(buf: &mut Vec<u8>, args: core::fmt::Arguments<'_>) {
 }
 
 use svgtypes::{FontFamily, parse_font_families};
-use xmlwriter::XmlWriter;
+type XmlWriter<'a> = xmlwriter::XmlWriter<'a, Vec<u8>>;
 
 use crate::parser::{AId, EId};
 use crate::*;
@@ -155,18 +155,19 @@ impl Default for WriteOptions {
 }
 
 pub(crate) fn convert(tree: &Tree, opt: &WriteOptions) -> String {
-    let mut xml = XmlWriter::new(xmlwriter::Options {
+    let mut xml = xmlwriter::XmlWriter::new(Vec::new(), xmlwriter::Options {
         use_single_quote: opt.use_single_quote,
         indent: opt.indent,
         attributes_indent: opt.attributes_indent,
+        enable_self_closing: true,
     });
 
     xml.start_svg_element(EId::Svg);
     xml.write_svg_attribute(AId::Width, &tree.size.width());
     xml.write_svg_attribute(AId::Height, &tree.size.height());
-    xml.write_attribute("xmlns", "http://www.w3.org/2000/svg");
+    let _ = xml.write_attribute("xmlns", "http://www.w3.org/2000/svg");
     if has_xlink(&tree.root) {
-        xml.write_attribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+        let _ = xml.write_attribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
     }
 
     let has_text_paths = has_text_paths(&tree.root);
@@ -176,10 +177,11 @@ pub(crate) fn convert(tree: &Tree, opt: &WriteOptions) -> String {
 
     write_elements(&tree.root, false, opt, &mut xml);
 
-    xml.end_document()
+    let buf = xml.end_document().expect("XML writing to Vec<u8> should not fail");
+    String::from_utf8(buf).expect("XML output should be valid UTF-8")
 }
 
-fn write_filters(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter) {
+fn write_filters(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter<'_>) {
     let mut written_fe_image_nodes: Vec<String> = Vec::new();
     for filter in tree.filters() {
         for fe in &filter.primitives {
@@ -208,7 +210,7 @@ fn write_filters(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter) {
                     xml.start_svg_element(EId::FeDropShadow);
                     xml.write_filter_primitive_attrs(filter.rect(), fe);
                     xml.write_filter_input(AId::In, &shadow.input);
-                    xml.write_attribute_fmt(
+                    let _ = xml.write_attribute_fmt(
                         AId::StdDeviation.to_str(),
                         format_args!("{} {}", shadow.std_dev_x.get(), shadow.std_dev_y.get()),
                     );
@@ -217,18 +219,18 @@ fn write_filters(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter) {
                     xml.write_color(AId::FloodColor, shadow.color);
                     xml.write_svg_attribute(AId::FloodOpacity, &shadow.opacity.get());
                     xml.write_svg_attribute(AId::Result, &fe.result);
-                    xml.end_element();
+                    let _ = xml.end_element();
                 }
                 filter::Kind::GaussianBlur(ref blur) => {
                     xml.start_svg_element(EId::FeGaussianBlur);
                     xml.write_filter_primitive_attrs(filter.rect(), fe);
                     xml.write_filter_input(AId::In, &blur.input);
-                    xml.write_attribute_fmt(
+                    let _ = xml.write_attribute_fmt(
                         AId::StdDeviation.to_str(),
                         format_args!("{} {}", blur.std_dev_x.get(), blur.std_dev_y.get()),
                     );
                     xml.write_svg_attribute(AId::Result, &fe.result);
-                    xml.end_element();
+                    let _ = xml.end_element();
                 }
                 filter::Kind::Offset(ref offset) => {
                     xml.start_svg_element(EId::FeOffset);
@@ -237,7 +239,7 @@ fn write_filters(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter) {
                     xml.write_svg_attribute(AId::Dx, &offset.dx);
                     xml.write_svg_attribute(AId::Dy, &offset.dy);
                     xml.write_svg_attribute(AId::Result, &fe.result);
-                    xml.end_element();
+                    let _ = xml.end_element();
                 }
                 filter::Kind::Blend(ref blend) => {
                     xml.start_svg_element(EId::FeBlend);
@@ -246,7 +248,7 @@ fn write_filters(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter) {
                     xml.write_filter_input(AId::In2, &blend.input2);
                     xml.write_svg_attribute(AId::Mode, &blend.mode.to_string());
                     xml.write_svg_attribute(AId::Result, &fe.result);
-                    xml.end_element();
+                    let _ = xml.end_element();
                 }
                 filter::Kind::Flood(ref flood) => {
                     xml.start_svg_element(EId::FeFlood);
@@ -254,7 +256,7 @@ fn write_filters(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter) {
                     xml.write_color(AId::FloodColor, flood.color);
                     xml.write_svg_attribute(AId::FloodOpacity, &flood.opacity.get());
                     xml.write_svg_attribute(AId::Result, &fe.result);
-                    xml.end_element();
+                    let _ = xml.end_element();
                 }
                 filter::Kind::Composite(ref composite) => {
                     xml.start_svg_element(EId::FeComposite);
@@ -283,7 +285,7 @@ fn write_filters(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter) {
                     }
 
                     xml.write_svg_attribute(AId::Result, &fe.result);
-                    xml.end_element();
+                    let _ = xml.end_element();
                 }
                 filter::Kind::Merge(ref merge) => {
                     xml.start_svg_element(EId::FeMerge);
@@ -292,31 +294,31 @@ fn write_filters(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter) {
                     for input in &merge.inputs {
                         xml.start_svg_element(EId::FeMergeNode);
                         xml.write_filter_input(AId::In, input);
-                        xml.end_element();
+                        let _ = xml.end_element();
                     }
 
-                    xml.end_element();
+                    let _ = xml.end_element();
                 }
                 filter::Kind::Tile(ref tile) => {
                     xml.start_svg_element(EId::FeTile);
                     xml.write_filter_primitive_attrs(filter.rect(), fe);
                     xml.write_filter_input(AId::In, &tile.input);
                     xml.write_svg_attribute(AId::Result, &fe.result);
-                    xml.end_element();
+                    let _ = xml.end_element();
                 }
                 filter::Kind::Image(ref img) => {
                     xml.start_svg_element(EId::FeImage);
                     xml.write_filter_primitive_attrs(filter.rect(), fe);
                     if let Some(child) = img.root.children.first() {
                         let prefix = opt.id_prefix.as_deref().unwrap_or_default();
-                        xml.write_attribute_fmt(
+                        let _ = xml.write_attribute_fmt(
                             "xlink:href",
                             format_args!("#{}{}", prefix, child.id()),
                         );
                     }
 
                     xml.write_svg_attribute(AId::Result, &fe.result);
-                    xml.end_element();
+                    let _ = xml.end_element();
                 }
                 filter::Kind::ComponentTransfer(ref transfer) => {
                     xml.start_svg_element(EId::FeComponentTransfer);
@@ -329,7 +331,7 @@ fn write_filters(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter) {
                     xml.write_filter_transfer_function(EId::FeFuncB, &transfer.func_b);
                     xml.write_filter_transfer_function(EId::FeFuncA, &transfer.func_a);
 
-                    xml.end_element();
+                    let _ = xml.end_element();
                 }
                 filter::Kind::ColorMatrix(ref matrix) => {
                     xml.start_svg_element(EId::FeColorMatrix);
@@ -355,7 +357,7 @@ fn write_filters(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter) {
                         }
                     }
 
-                    xml.end_element();
+                    let _ = xml.end_element();
                 }
                 filter::Kind::ConvolveMatrix(ref matrix) => {
                     xml.start_svg_element(EId::FeConvolveMatrix);
@@ -363,7 +365,7 @@ fn write_filters(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter) {
                     xml.write_filter_input(AId::In, &matrix.input);
                     xml.write_svg_attribute(AId::Result, &fe.result);
 
-                    xml.write_attribute_fmt(
+                    let _ = xml.write_attribute_fmt(
                         AId::Order.to_str(),
                         format_args!("{} {}", matrix.matrix.columns, matrix.matrix.rows),
                     );
@@ -389,7 +391,7 @@ fn write_filters(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter) {
                         },
                     );
 
-                    xml.end_element();
+                    let _ = xml.end_element();
                 }
                 filter::Kind::Morphology(ref morphology) => {
                     xml.start_svg_element(EId::FeMorphology);
@@ -404,7 +406,7 @@ fn write_filters(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter) {
                             filter::MorphologyOperator::Dilate => "dilate",
                         },
                     );
-                    xml.write_attribute_fmt(
+                    let _ = xml.write_attribute_fmt(
                         AId::Radius.to_str(),
                         format_args!(
                             "{} {}",
@@ -413,7 +415,7 @@ fn write_filters(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter) {
                         ),
                     );
 
-                    xml.end_element();
+                    let _ = xml.end_element();
                 }
                 filter::Kind::DisplacementMap(ref map) => {
                     xml.start_svg_element(EId::FeDisplacementMap);
@@ -438,14 +440,14 @@ fn write_filters(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter) {
                     write_channel(map.x_channel_selector, AId::XChannelSelector);
                     write_channel(map.y_channel_selector, AId::YChannelSelector);
 
-                    xml.end_element();
+                    let _ = xml.end_element();
                 }
                 filter::Kind::Turbulence(ref turbulence) => {
                     xml.start_svg_element(EId::FeTurbulence);
                     xml.write_filter_primitive_attrs(filter.rect(), fe);
                     xml.write_svg_attribute(AId::Result, &fe.result);
 
-                    xml.write_attribute_fmt(
+                    let _ = xml.write_attribute_fmt(
                         AId::BaseFrequency.to_str(),
                         format_args!(
                             "{} {}",
@@ -470,7 +472,7 @@ fn write_filters(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter) {
                         },
                     );
 
-                    xml.end_element();
+                    let _ = xml.end_element();
                 }
                 filter::Kind::DiffuseLighting(ref light) => {
                     xml.start_svg_element(EId::FeDiffuseLighting);
@@ -482,7 +484,7 @@ fn write_filters(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter) {
                     xml.write_color(AId::LightingColor, light.lighting_color);
                     write_light_source(&light.light_source, xml);
 
-                    xml.end_element();
+                    let _ = xml.end_element();
                 }
                 filter::Kind::SpecularLighting(ref light) => {
                     xml.start_svg_element(EId::FeSpecularLighting);
@@ -495,16 +497,16 @@ fn write_filters(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter) {
                     xml.write_color(AId::LightingColor, light.lighting_color);
                     write_light_source(&light.light_source, xml);
 
-                    xml.end_element();
+                    let _ = xml.end_element();
                 }
             };
         }
 
-        xml.end_element();
+        let _ = xml.end_element();
     }
 }
 
-fn write_defs(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter, write_text_paths: bool) {
+fn write_defs(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter<'_>, write_text_paths: bool) {
     xml.start_svg_element(EId::Defs);
     for lg in tree.linear_gradients() {
         xml.start_svg_element(EId::LinearGradient);
@@ -514,7 +516,7 @@ fn write_defs(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter, write_text_p
         xml.write_svg_attribute(AId::X2, &lg.x2);
         xml.write_svg_attribute(AId::Y2, &lg.y2);
         write_base_grad(&lg.base, opt, xml);
-        xml.end_element();
+        let _ = xml.end_element();
     }
 
     for rg in tree.radial_gradients() {
@@ -526,7 +528,7 @@ fn write_defs(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter, write_text_p
         xml.write_svg_attribute(AId::Fx, &rg.fx);
         xml.write_svg_attribute(AId::Fy, &rg.fy);
         write_base_grad(&rg.base, opt, xml);
-        xml.end_element();
+        let _ = xml.end_element();
     }
 
     for pattern in tree.patterns() {
@@ -543,7 +545,7 @@ fn write_defs(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter, write_text_p
 
         write_elements(&pattern.root, false, opt, xml);
 
-        xml.end_element();
+        let _ = xml.end_element();
     }
 
     if write_text_paths {
@@ -563,7 +565,7 @@ fn write_defs(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter, write_text_p
 
         write_elements(&clip.root, true, opt, xml);
 
-        xml.end_element();
+        let _ = xml.end_element();
     }
 
     for mask in tree.masks() {
@@ -585,9 +587,9 @@ fn write_defs(tree: &Tree, opt: &WriteOptions, xml: &mut XmlWriter, write_text_p
 
         write_elements(&mask.root, false, opt, xml);
 
-        xml.end_element();
+        let _ = xml.end_element();
     }
-    xml.end_element(); // end EId::Defs
+    let _ = xml.end_element(); // end EId::Defs
 }
 
 fn has_text_paths(parent: &Group) -> bool {
@@ -629,7 +631,7 @@ fn has_text_paths(parent: &Group) -> bool {
 }
 
 /// Write the `path` elements for text paths.
-fn write_text_path_paths(parent: &Group, opt: &WriteOptions, xml: &mut XmlWriter) {
+fn write_text_path_paths(parent: &Group, opt: &WriteOptions, xml: &mut XmlWriter<'_>) {
     for node in &parent.children {
         if let Node::Group(group) = node {
             write_text_path_paths(group, opt, xml);
@@ -657,13 +659,13 @@ fn write_text_path_paths(parent: &Group, opt: &WriteOptions, xml: &mut XmlWriter
     }
 }
 
-fn write_elements(parent: &Group, is_clip_path: bool, opt: &WriteOptions, xml: &mut XmlWriter) {
+fn write_elements(parent: &Group, is_clip_path: bool, opt: &WriteOptions, xml: &mut XmlWriter<'_>) {
     for n in &parent.children {
         write_element(n, is_clip_path, opt, xml);
     }
 }
 
-fn write_element(node: &Node, is_clip_path: bool, opt: &WriteOptions, xml: &mut XmlWriter) {
+fn write_element(node: &Node, is_clip_path: bool, opt: &WriteOptions, xml: &mut XmlWriter<'_>) {
     match node {
         Node::Path(p) => {
             write_path(p, is_clip_path, Transform::default(), None, opt, xml);
@@ -685,22 +687,22 @@ fn write_element(node: &Node, is_clip_path: bool, opt: &WriteOptions, xml: &mut 
                     xml.write_svg_attribute(AId::ImageRendering, "optimizeSpeed");
                 }
                 ImageRendering::Smooth => {
-                    xml.write_attribute(AId::Style.to_str(), "image-rendering:smooth");
+                    let _ = xml.write_attribute(AId::Style.to_str(), "image-rendering:smooth");
                 }
                 ImageRendering::HighQuality => {
-                    xml.write_attribute(AId::Style.to_str(), "image-rendering:high-quality");
+                    let _ = xml.write_attribute(AId::Style.to_str(), "image-rendering:high-quality");
                 }
                 ImageRendering::CrispEdges => {
-                    xml.write_attribute(AId::Style.to_str(), "image-rendering:crisp-edges");
+                    let _ = xml.write_attribute(AId::Style.to_str(), "image-rendering:crisp-edges");
                 }
                 ImageRendering::Pixelated => {
-                    xml.write_attribute(AId::Style.to_str(), "image-rendering:pixelated");
+                    let _ = xml.write_attribute(AId::Style.to_str(), "image-rendering:pixelated");
                 }
             }
 
             xml.write_image_data(&img.kind);
 
-            xml.end_element();
+            let _ = xml.end_element();
         }
         Node::Group(g) => {
             write_group_element(g, is_clip_path, opt, xml);
@@ -713,7 +715,7 @@ fn write_element(node: &Node, is_clip_path: bool, opt: &WriteOptions, xml: &mut 
                     xml.write_id_attribute(&text.id, opt);
                 }
 
-                xml.write_attribute("xml:space", "preserve");
+                let _ = xml.write_attribute("xml:space", "preserve");
 
                 match text.writing_mode {
                     WritingMode::LeftToRight => {}
@@ -749,7 +751,7 @@ fn write_element(node: &Node, is_clip_path: bool, opt: &WriteOptions, xml: &mut 
                         xml.start_svg_element(EId::TextPath);
 
                         let prefix = opt.id_prefix.as_deref().unwrap_or_default();
-                        xml.write_attribute_fmt(
+                        let _ = xml.write_attribute_fmt(
                             "xlink:href",
                             format_args!("#{}{}", prefix, text_path.id()),
                         );
@@ -802,18 +804,18 @@ fn write_element(node: &Node, is_clip_path: bool, opt: &WriteOptions, xml: &mut 
 
                         // End for each tspan we needed to create for decorations
                         for _ in &decorations {
-                            xml.end_element();
+                            let _ = xml.end_element();
                         }
                     }
-                    xml.end_element();
+                    let _ = xml.end_element();
 
                     // End textPath element
                     if matches!(&chunk.text_flow, TextFlow::Path(_)) {
-                        xml.end_element();
+                        let _ = xml.end_element();
                     }
                 }
 
-                xml.end_element();
+                let _ = xml.end_element();
                 xml.set_preserve_whitespaces(false);
             } else {
                 write_group_element(text.flattened(), is_clip_path, opt, xml);
@@ -822,7 +824,7 @@ fn write_element(node: &Node, is_clip_path: bool, opt: &WriteOptions, xml: &mut 
     }
 }
 
-fn write_group_element(g: &Group, is_clip_path: bool, opt: &WriteOptions, xml: &mut XmlWriter) {
+fn write_group_element(g: &Group, is_clip_path: bool, opt: &WriteOptions, xml: &mut XmlWriter<'_>) {
     if is_clip_path {
         // The `clipPath` element in SVG doesn't allow groups, only shapes and text.
         // The problem is that in `usvg` we can set a `clip-path` only on groups.
@@ -901,7 +903,7 @@ fn write_group_element(g: &Group, is_clip_path: bool, opt: &WriteOptions, xml: &
         // For reasons unknown, `mix-blend-mode` and `isolation` must be written
         // as `style` attribute.
         let isolation = if g.isolate { "isolate" } else { "auto" };
-        xml.write_attribute_fmt(
+        let _ = xml.write_attribute_fmt(
             AId::Style.to_str(),
             format_args!("mix-blend-mode:{};isolation:{}", g.blend_mode, isolation),
         );
@@ -909,7 +911,7 @@ fn write_group_element(g: &Group, is_clip_path: bool, opt: &WriteOptions, xml: &
 
     write_elements(g, false, opt, xml);
 
-    xml.end_element();
+    let _ = xml.end_element();
 }
 
 trait XmlWriterExt {
@@ -929,15 +931,15 @@ trait XmlWriterExt {
     fn write_filter_transfer_function(&mut self, eid: EId, fe: &filter::TransferFunction);
 }
 
-impl XmlWriterExt for XmlWriter {
+impl XmlWriterExt for XmlWriter<'_> {
     #[inline(never)]
     fn start_svg_element(&mut self, id: EId) {
-        self.start_element(id.to_str());
+        let _ = self.start_element(id.to_str());
     }
 
     #[inline(never)]
     fn write_svg_attribute<V: Display + ?Sized>(&mut self, id: AId, value: &V) {
-        self.write_attribute(id.to_str(), value);
+        let _ = self.write_attribute(id.to_str(), value);
     }
 
     #[inline(never)]
@@ -946,9 +948,9 @@ impl XmlWriterExt for XmlWriter {
 
         if let Some(ref prefix) = opt.id_prefix {
             let full_id = format!("{}{}", prefix, id);
-            self.write_attribute("id", &full_id);
+            let _ = self.write_attribute("id", &full_id);
         } else {
-            self.write_attribute("id", id);
+            let _ = self.write_attribute("id", id);
         }
     }
 
@@ -965,15 +967,16 @@ impl XmlWriterExt for XmlWriter {
         let (g1, g2) = int2hex(c.green);
         let (b1, b2) = int2hex(c.blue);
 
-        self.write_attribute_raw(id.to_str(), |buf| {
+        let _ = self.write_attribute_raw(id.to_str(), |buf| {
             buf.extend_from_slice(&[b'#', r1, r2, g1, g2, b1, b2]);
+            Ok(())
         });
     }
 
     // TODO: simplify
     fn write_units(&mut self, id: AId, units: Units, def: Units) {
         if units != def {
-            self.write_attribute(
+            let _ = self.write_attribute(
                 id.to_str(),
                 match units {
                     Units::UserSpaceOnUse => "userSpaceOnUse",
@@ -985,7 +988,7 @@ impl XmlWriterExt for XmlWriter {
 
     fn write_transform(&mut self, id: AId, ts: Transform, opt: &WriteOptions) {
         if !ts.is_default() {
-            self.write_attribute_raw(id.to_str(), |buf| {
+            let _ = self.write_attribute_raw(id.to_str(), |buf| {
                 buf.extend_from_slice(b"matrix(");
                 write_num(ts.sx, buf, opt.transforms_precision);
                 buf.push(b' ');
@@ -999,20 +1002,21 @@ impl XmlWriterExt for XmlWriter {
                 buf.push(b' ');
                 write_num(ts.ty, buf, opt.transforms_precision);
                 buf.extend_from_slice(b")");
+                Ok(())
             });
         }
     }
 
     fn write_visibility(&mut self, value: bool) {
         if !value {
-            self.write_attribute(AId::Visibility.to_str(), "hidden");
+            let _ = self.write_attribute(AId::Visibility.to_str(), "hidden");
         }
     }
 
     fn write_func_iri(&mut self, aid: AId, id: &str, opt: &WriteOptions) {
         debug_assert!(!id.is_empty());
         let prefix = opt.id_prefix.as_deref().unwrap_or_default();
-        self.write_attribute_fmt(aid.to_str(), format_args!("url(#{}{})", prefix, id));
+        let _ = self.write_attribute_fmt(aid.to_str(), format_args!("url(#{}{})", prefix, id));
     }
 
     fn write_rect_attrs(&mut self, r: NonZeroRect) {
@@ -1023,7 +1027,7 @@ impl XmlWriterExt for XmlWriter {
     }
 
     fn write_numbers(&mut self, aid: AId, list: &[f32]) {
-        self.write_attribute_raw(aid.to_str(), |buf| {
+        let _ = self.write_attribute_raw(aid.to_str(), |buf| {
             for n in list {
                 write_bytes_fmt(buf, format_args!("{} ", n));
             }
@@ -1031,11 +1035,12 @@ impl XmlWriterExt for XmlWriter {
             if !list.is_empty() {
                 buf.pop();
             }
+            Ok(())
         });
     }
 
     fn write_filter_input(&mut self, id: AId, input: &filter::Input) {
-        self.write_attribute(
+        let _ = self.write_attribute(
             id.to_str(),
             match input {
                 filter::Input::SourceGraphic => "SourceGraphic",
@@ -1059,7 +1064,7 @@ impl XmlWriterExt for XmlWriter {
             self.write_svg_attribute(AId::Height, &fe.rect().height());
         }
 
-        self.write_attribute(
+        let _ = self.write_attribute(
             AId::ColorInterpolationFilters.to_str(),
             match fe.color_interpolation {
                 filter::ColorInterpolation::SRGB => "sRGB",
@@ -1100,7 +1105,7 @@ impl XmlWriterExt for XmlWriter {
             }
         }
 
-        self.end_element();
+        let _ = self.end_element();
     }
 
     fn write_image_data(&mut self, kind: &ImageKind) {
@@ -1116,7 +1121,7 @@ impl XmlWriterExt for XmlWriter {
             }
         };
 
-        self.write_attribute_raw("xlink:href", |buf| {
+        let _ = self.write_attribute_raw("xlink:href", |buf| {
             use base64::Engine;
             buf.extend_from_slice(b"data:image/");
             buf.extend_from_slice(mime.as_bytes());
@@ -1124,6 +1129,7 @@ impl XmlWriterExt for XmlWriter {
 
             let encoded = base64::engine::general_purpose::STANDARD.encode(data);
             buf.extend_from_slice(encoded.as_bytes());
+            Ok(())
         });
     }
 }
@@ -1183,7 +1189,7 @@ fn has_xlink(parent: &Group) -> bool {
     false
 }
 
-fn write_base_grad(g: &BaseGradient, opt: &WriteOptions, xml: &mut XmlWriter) {
+fn write_base_grad(g: &BaseGradient, opt: &WriteOptions, xml: &mut XmlWriter<'_>) {
     xml.write_units(AId::GradientUnits, g.units, Units::ObjectBoundingBox);
     xml.write_transform(AId::GradientTransform, g.transform, opt);
 
@@ -1201,7 +1207,7 @@ fn write_base_grad(g: &BaseGradient, opt: &WriteOptions, xml: &mut XmlWriter) {
             xml.write_svg_attribute(AId::StopOpacity, &s.opacity.get());
         }
 
-        xml.end_element();
+        let _ = xml.end_element();
     }
 }
 
@@ -1211,7 +1217,7 @@ fn write_path(
     path_transform: Transform,
     clip_path: Option<&str>,
     opt: &WriteOptions,
-    xml: &mut XmlWriter,
+    xml: &mut XmlWriter<'_>,
 ) {
     xml.start_svg_element(EId::Path);
     if !path.id.is_empty() {
@@ -1241,7 +1247,7 @@ fn write_path(
 
     xml.write_transform(AId::Transform, path_transform, opt);
 
-    xml.write_attribute_raw("d", |buf| {
+    let _ = xml.write_attribute_raw("d", |buf| {
         use tiny_skia_path::PathSegment;
 
         for seg in path.data.segments() {
@@ -1293,12 +1299,13 @@ fn write_path(
         }
 
         buf.pop();
+        Ok(())
     });
 
-    xml.end_element();
+    let _ = xml.end_element();
 }
 
-fn write_fill(fill: &Option<Fill>, is_clip_path: bool, opt: &WriteOptions, xml: &mut XmlWriter) {
+fn write_fill(fill: &Option<Fill>, is_clip_path: bool, opt: &WriteOptions, xml: &mut XmlWriter<'_>) {
     if let Some(fill) = fill {
         write_paint(AId::Fill, &fill.paint, opt, xml);
 
@@ -1320,7 +1327,7 @@ fn write_fill(fill: &Option<Fill>, is_clip_path: bool, opt: &WriteOptions, xml: 
     }
 }
 
-fn write_stroke(stroke: &Option<Stroke>, opt: &WriteOptions, xml: &mut XmlWriter) {
+fn write_stroke(stroke: &Option<Stroke>, opt: &WriteOptions, xml: &mut XmlWriter<'_>) {
     if let Some(stroke) = stroke {
         write_paint(AId::Stroke, &stroke.paint, opt, xml);
 
@@ -1364,7 +1371,7 @@ fn write_stroke(stroke: &Option<Stroke>, opt: &WriteOptions, xml: &mut XmlWriter
     }
 }
 
-fn write_paint(aid: AId, paint: &Paint, opt: &WriteOptions, xml: &mut XmlWriter) {
+fn write_paint(aid: AId, paint: &Paint, opt: &WriteOptions, xml: &mut XmlWriter<'_>) {
     match paint {
         Paint::Color(c) => xml.write_color(aid, *c),
         Paint::LinearGradient(lg) => {
@@ -1379,7 +1386,7 @@ fn write_paint(aid: AId, paint: &Paint, opt: &WriteOptions, xml: &mut XmlWriter)
     }
 }
 
-fn write_light_source(light: &filter::LightSource, xml: &mut XmlWriter) {
+fn write_light_source(light: &filter::LightSource, xml: &mut XmlWriter<'_>) {
     match light {
         filter::LightSource::DistantLight(light) => {
             xml.start_svg_element(EId::FeDistantLight);
@@ -1407,7 +1414,7 @@ fn write_light_source(light: &filter::LightSource, xml: &mut XmlWriter) {
         }
     }
 
-    xml.end_element();
+    let _ = xml.end_element();
 }
 
 static POW_VEC: &[f32] = &[
@@ -1428,7 +1435,7 @@ static POW_VEC: &[f32] = &[
 
 fn write_num(num: f32, buf: &mut Vec<u8>, precision: u8) {
     // If number is an integer, it's faster to write it as i32.
-    if num.fract().approx_zero_ulps(4) {
+    if (num - libm::truncf(num)).approx_zero_ulps(4) {
         write_bytes_fmt(buf, format_args!("{}", num as i32));
         return;
     }
@@ -1440,7 +1447,7 @@ fn write_num(num: f32, buf: &mut Vec<u8>, precision: u8) {
     // Note that at least in Rust 1.64 the number formatting in debug and release modes
     // can be slightly different. So having a lower precision makes
     // our output and tests reproducible.
-    let v = (num * POW_VEC[precision as usize]).round() / POW_VEC[precision as usize];
+    let v = libm::roundf(num * POW_VEC[precision as usize]) / POW_VEC[precision as usize];
 
     write_bytes_fmt(buf, format_args!("{}", v));
 }
@@ -1449,7 +1456,7 @@ fn write_num(num: f32, buf: &mut Vec<u8>, precision: u8) {
 fn write_span(
     is_clip_path: bool,
     opt: &WriteOptions,
-    xml: &mut XmlWriter,
+    xml: &mut XmlWriter<'_>,
     chunk: &TextChunk,
     span: &TextSpan,
 ) {
@@ -1541,7 +1548,7 @@ fn write_span(
     }
 
     if !span.apply_kerning {
-        xml.write_attribute("style", "font-kerning:none");
+        let _ = xml.write_attribute("style", "font-kerning:none");
     }
 
     if span.dominant_baseline != DominantBaseline::Auto {
@@ -1595,12 +1602,12 @@ fn write_span(
 
     let cur_text = &chunk.text[span.start..span.end];
 
-    xml.write_text(&cur_text.replace('&', "&amp;"));
+    let _ = xml.write_text(&cur_text.replace('&', "&amp;"));
 
     // End for each tspan we needed to create for baseline_shift
     for _ in &span.baseline_shift {
-        xml.end_element();
+        let _ = xml.end_element();
     }
 
-    xml.end_element();
+    let _ = xml.end_element();
 }
