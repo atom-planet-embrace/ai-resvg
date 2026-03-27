@@ -77,7 +77,7 @@ impl core::fmt::Display for Error {
     }
 }
 
-// Note: std::error::Error is not available in no_std
+impl core::error::Error for Error {}
 
 pub(crate) trait OptionLog {
     fn log_none<F: FnOnce()>(self, f: F) -> Self;
