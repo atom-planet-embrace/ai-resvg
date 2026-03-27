@@ -17,7 +17,7 @@ required-features = ["text", "system-fonts", "memmap-fonts"]
 [dependencies]
 gif = { version = "0.14.1", optional = true }
 image-webp = { version = "0.2.4", optional = true }
-libm = "0.2"
+libm = { version = "0.2", default-features = false }
 log = { version = "0.4", default-features = false }
 no_std_io = { version = "0.6", default-features = false, features = ["alloc"] }
 pico-args = { version = "0.5", features = ["eq-separator"], optional = true }
