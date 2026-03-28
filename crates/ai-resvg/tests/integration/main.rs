@@ -1,6 +1,7 @@
 // Copyright 2020 the Resvg Authors
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
+use ai_resvg::usvg;
 use once_cell::sync::Lazy;
 use png::{BitDepth, ColorType, Encoder};
 use rgb::{FromSlice, RGBA8, Rgba};
@@ -9,7 +10,6 @@ use std::fs::File;
 use std::io::{BufWriter, Cursor};
 use std::process::Command;
 use std::sync::Arc;
-use ai_resvg::usvg;
 use usvg::fontdb;
 
 #[rustfmt::skip]

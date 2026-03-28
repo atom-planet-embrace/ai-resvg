@@ -55,7 +55,8 @@ pub(crate) fn convert_length(
                     | AId::Y1
                     | AId::Y2 => convert_percent(length, view_box.height()),
                     _ => {
-                        let mut vb_len = libm::powf(view_box.width(), 2.0) + libm::powf(view_box.height(), 2.0);
+                        let mut vb_len =
+                            libm::powf(view_box.width(), 2.0) + libm::powf(view_box.height(), 2.0);
                         vb_len = libm::sqrtf(vb_len / 2.0);
                         convert_percent(length, vb_len)
                     }

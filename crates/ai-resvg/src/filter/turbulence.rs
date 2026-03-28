@@ -114,7 +114,9 @@ fn init(mut seed: i32) -> (Vec<usize>, Vec<Vec<Vec<f64>>>) {
                     ((seed % (B_SIZE_32 + B_SIZE_32)) - B_SIZE_32) as f64 / B_SIZE_32 as f64;
             }
 
-            let s = libm::sqrt(gradient[k][i][0] * gradient[k][i][0] + gradient[k][i][1] * gradient[k][i][1]);
+            let s = libm::sqrt(
+                gradient[k][i][0] * gradient[k][i][0] + gradient[k][i][1] * gradient[k][i][1],
+            );
 
             gradient[k][i][0] /= s;
             gradient[k][i][1] /= s;
@@ -204,7 +206,14 @@ fn turbulence(
         if fractal_sum {
             sum += noise2(color_channel, x, y, lattice_selector, gradient, stitch) / ratio;
         } else {
-            sum += libm::fabs(noise2(color_channel, x, y, lattice_selector, gradient, stitch)) / ratio;
+            sum += libm::fabs(noise2(
+                color_channel,
+                x,
+                y,
+                lattice_selector,
+                gradient,
+                stitch,
+            )) / ratio;
         }
         x *= 2.0;
         y *= 2.0;

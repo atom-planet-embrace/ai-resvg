@@ -1,8 +1,8 @@
 // Copyright 2018 the Resvg Authors
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
-use tiny_skia_path::Rect;
 use ai_usvg::Color;
+use tiny_skia_path::Rect;
 
 #[test]
 fn clippath_with_invalid_child() {

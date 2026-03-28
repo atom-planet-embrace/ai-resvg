@@ -4,10 +4,10 @@
 use alloc::borrow::ToOwned;
 use alloc::string::String;
 use alloc::string::ToString;
-use alloc::vec;
-use alloc::vec::Vec;
 #[cfg(feature = "text")]
 use alloc::sync::Arc;
+use alloc::vec;
+use alloc::vec::Vec;
 
 #[cfg(feature = "text")]
 use crate::FontResolver;

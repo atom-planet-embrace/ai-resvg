@@ -136,8 +136,10 @@ fn gaussianiir2d(d: &BlurData, buf: &mut [f64]) {
         (1.0, 1.0)
     };
 
-    let post_scale =
-        libm::pow(libm::sqrt(dnu_x * dnu_y) / libm::sqrt(lambda_x * lambda_y), (2 * d.steps as i32) as f64);
+    let post_scale = libm::pow(
+        libm::sqrt(dnu_x * dnu_y) / libm::sqrt(lambda_x * lambda_y),
+        (2 * d.steps as i32) as f64,
+    );
     buf.iter_mut().for_each(|v| *v *= post_scale);
 }
 

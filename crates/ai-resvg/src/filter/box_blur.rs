@@ -6,8 +6,8 @@
 #![allow(clippy::needless_range_loop)]
 
 use super::ImageRefMut;
-use rgb::RGBA8;
 use core::cmp;
+use rgb::RGBA8;
 
 const STEPS: usize = 5;
 
