@@ -9,66 +9,10 @@ use core::fmt::Display;
 use no_std_io::io::Write;
 
 use svgtypes::{FontFamily, parse_font_families};
+use xmlwriter::XmlWriter;
 
 use crate::parser::{AId, EId};
 use crate::*;
-
-/// A thin wrapper around `xmlwriter::XmlWriter<Vec<u8>>` that unwraps all
-/// `io::Result`s internally, since writing to `Vec<u8>` is infallible.
-/// This preserves the ergonomic non-Result API that the rest of the codebase expects.
-pub(crate) struct XmlWriter {
-    inner: xmlwriter::XmlWriter<'static, Vec<u8>>,
-}
-
-impl XmlWriter {
-    pub fn new(opt: xmlwriter::Options) -> Self {
-        Self {
-            inner: xmlwriter::XmlWriter::new(Vec::new(), opt),
-        }
-    }
-
-    pub fn start_element(&mut self, name: &'static str) {
-        self.inner.start_element(name).unwrap();
-    }
-
-    pub fn end_element(&mut self) {
-        self.inner.end_element().unwrap();
-    }
-
-    pub fn write_attribute<V: Display + ?Sized>(&mut self, name: &str, value: &V) {
-        self.inner.write_attribute(name, value).unwrap();
-    }
-
-    pub fn write_attribute_fmt(&mut self, name: &str, fmt: core::fmt::Arguments) {
-        self.inner.write_attribute_fmt(name, fmt).unwrap();
-    }
-
-    pub fn write_attribute_raw<F>(&mut self, name: &str, f: F)
-    where
-        F: FnOnce(&mut Vec<u8>),
-    {
-        self.inner
-            .write_attribute_raw(name, |w| {
-                f(w);
-                Ok(())
-            })
-            .unwrap();
-    }
-
-    pub fn set_preserve_whitespaces(&mut self, preserve: bool) {
-        self.inner.set_preserve_whitespaces(preserve);
-    }
-
-    pub fn write_text<T: Display + ?Sized>(&mut self, text: &T) {
-        self.inner.write_text(text).unwrap();
-    }
-
-    pub fn end_document(self) -> String {
-        let buf = self.inner.end_document().unwrap();
-        // SAFETY: XmlWriter only writes valid UTF-8 content
-        String::from_utf8(buf).unwrap()
-    }
-}
 
 impl Tree {
     /// Writes `usvg::Tree` back to SVG.
@@ -203,7 +147,6 @@ pub(crate) fn convert(tree: &Tree, opt: &WriteOptions) -> String {
         use_single_quote: opt.use_single_quote,
         indent: opt.indent,
         attributes_indent: opt.attributes_indent,
-        enable_self_closing: true,
     });
 
     xml.start_svg_element(EId::Svg);
