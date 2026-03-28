@@ -53,6 +53,8 @@ and can focus just on the rendering part.
 #![warn(missing_copy_implementations)]
 
 extern crate alloc;
+#[cfg(feature = "std")]
+extern crate std;
 
 mod parser;
 #[cfg(feature = "text")]

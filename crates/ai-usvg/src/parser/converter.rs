@@ -6,7 +6,6 @@ use alloc::format;
 use alloc::string::String;
 use alloc::string::ToString;
 use alloc::sync::Arc;
-use alloc::vec;
 use alloc::vec::Vec;
 use core::hash::{Hash, Hasher};
 use core::str::FromStr;

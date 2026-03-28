@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
 use alloc::string::ToString;
-use alloc::vec;
 use alloc::vec::Vec;
 use hashbrown::HashMap;
 

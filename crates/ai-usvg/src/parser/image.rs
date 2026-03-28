@@ -142,6 +142,7 @@ impl core::fmt::Debug for ImageHrefResolver<'_> {
     }
 }
 
+#[cfg_attr(not(feature = "std"), allow(dead_code))]
 #[derive(Clone, Copy, PartialEq, Debug)]
 enum ImageFormat {
     PNG,

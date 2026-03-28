@@ -694,7 +694,7 @@ fn render_svg(args: &Args, tree: &usvg::Tree) -> Result<tiny_skia::Pixmap, Strin
 
         let ts = args.fit_to.fit_to_transform(tree.size().to_int_size());
 
-        resvg::render_node(node, ts, &mut pixmap.as_mut());
+        ai_resvg::render_node(node, ts, &mut pixmap.as_mut());
 
         if args.export_area_page {
             // TODO: add offset support to render_node() so we would not need an additional pixmap
@@ -740,7 +740,7 @@ fn render_svg(args: &Args, tree: &usvg::Tree) -> Result<tiny_skia::Pixmap, Strin
 
         let ts = args.fit_to.fit_to_transform(tree.size().to_int_size());
 
-        resvg::render(tree, ts, &mut pixmap.as_mut());
+        ai_resvg::render(tree, ts, &mut pixmap.as_mut());
 
         if args.export_area_drawing {
             trim_pixmap(tree, ts, &pixmap).unwrap_or(pixmap)
