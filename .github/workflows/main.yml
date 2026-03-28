@@ -46,7 +46,7 @@ jobs:
 
     - name: Build C API without default features
       working-directory: crates/c-api
-      run: cargo build --no-default-features
+      run: cargo build --no-default-features --features std
 
     - name: Build resvg without default support
       working-directory: crates/ai-resvg
@@ -101,7 +101,7 @@ jobs:
         working-directory: tools/explorer-thumbnailer
         env:
           RUSTFLAGS: -Ctarget-feature=+crt-static # make sure it's static
-        run: cargo build --features std
+        run: cargo build
 
       # Unlike other binaries, viewsvg isn't built with crt-static
       - name: Build C API
