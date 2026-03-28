@@ -6,7 +6,6 @@ use com::sys::S_OK;
 use resvg::{tiny_skia, usvg};
 use std::mem;
 use std::ptr;
-use usvg::fontdb;
 use winapi::ctypes::c_void;
 use winapi::shared::minwindef::ULONG;
 use winapi::shared::windef::{HBITMAP, HDC};
