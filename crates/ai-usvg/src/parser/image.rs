@@ -126,7 +126,13 @@ impl ImageHrefResolver<'_> {
     /// Without filesystem access, this resolver always returns `None`.
     #[cfg(not(feature = "std"))]
     pub fn default_string_resolver() -> ImageHrefStringResolverFn<'static> {
-        Box::new(move |_href: &str, _opts: &Options| None)
+        Box::new(move |href: &str, _opts: &Options| {
+            log::warn!(
+                "Image '{}' cannot be loaded: filesystem access is not available without the 'std' feature.",
+                href
+            );
+            None
+        })
     }
 }
 
