@@ -106,7 +106,7 @@ jobs:
       # Unlike other binaries, viewsvg isn't built with crt-static
       - name: Build C API
         working-directory: crates/c-api
-        run: cargo build --release --features std
+        run: cargo build --release --features std,system-fonts,memmap-fonts
 
   # If this fails, consider changing your text or adding something to .typos.toml.
   typos:
