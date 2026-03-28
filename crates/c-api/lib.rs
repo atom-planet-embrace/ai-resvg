@@ -11,6 +11,7 @@
 extern crate alloc;
 
 use alloc::boxed::Box;
+#[cfg(not(feature = "std"))]
 use alloc::string::String;
 use alloc::string::ToString;
 use alloc::vec::Vec;

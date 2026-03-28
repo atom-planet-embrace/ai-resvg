@@ -5,9 +5,9 @@ use std::sync::Arc;
 
 use once_cell::sync::Lazy;
 
-static GLOBAL_FONTDB: Lazy<Arc<usvg::fontdb::Database>> = Lazy::new(|| {
-    let mut fontdb = usvg::fontdb::Database::new();
-    fontdb.load_fonts_dir("../resvg/tests/fonts");
+static GLOBAL_FONTDB: Lazy<Arc<ai_usvg::fontdb::Database>> = Lazy::new(|| {
+    let mut fontdb = ai_usvg::fontdb::Database::new();
+    fontdb.load_fonts_dir("../ai-resvg/tests/fonts");
     fontdb.set_serif_family("Noto Serif");
     fontdb.set_sans_serif_family("Noto Sans");
     fontdb.set_cursive_family("Yellowtail");
@@ -32,18 +32,18 @@ fn resave_impl(name: &str, id_prefix: Option<String>, preserve_text: bool) {
     let input_svg = std::fs::read_to_string(format!("tests/files/{}.svg", name)).unwrap();
 
     let tree = {
-        let opt = usvg::Options {
+        let opt = ai_usvg::Options {
             fontdb: GLOBAL_FONTDB.clone(),
             ..Default::default()
         };
-        usvg::Tree::from_str(&input_svg, &opt).unwrap()
+        ai_usvg::Tree::from_str(&input_svg, &opt).unwrap()
     };
-    let xml_opt = usvg::WriteOptions {
+    let xml_opt = ai_usvg::WriteOptions {
         id_prefix,
         preserve_text,
         coordinates_precision: 4, // Reduce noise and file size.
         transforms_precision: 4,
-        ..usvg::WriteOptions::default()
+        ..ai_usvg::WriteOptions::default()
     };
     let output_svg = tree.to_string(&xml_opt);
 

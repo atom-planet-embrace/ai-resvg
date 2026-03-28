@@ -13,7 +13,7 @@ use fontdb::{Database, ID};
 use rustybuzz::ttf_parser;
 use rustybuzz::ttf_parser::{GlyphId, RasterImageFormat, RgbaColor};
 use tiny_skia_path::{NonZeroRect, Size, Transform};
-use xmlwriter::XmlWriter;
+use crate::writer::XmlWriter;
 
 use crate::text::colr::GlyphPainter;
 use crate::*;

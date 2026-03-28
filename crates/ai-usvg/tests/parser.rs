@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
 use tiny_skia_path::Rect;
-use usvg::Color;
+use ai_usvg::Color;
 
 #[test]
 fn clippath_with_invalid_child() {
@@ -15,7 +15,7 @@ fn clippath_with_invalid_child() {
     </svg>
     ";
 
-    let tree = usvg::Tree::from_str(&svg, &usvg::Options::default()).unwrap();
+    let tree = ai_usvg::Tree::from_str(&svg, &ai_usvg::Options::default()).unwrap();
     // clipPath is invalid and should be removed together with rect.
     assert!(!tree.root().has_children());
 }
@@ -38,53 +38,53 @@ fn stylesheet_injection() {
 
     let stylesheet = "rect { fill: red }".to_string();
 
-    let options = usvg::Options {
+    let options = ai_usvg::Options {
         style_sheet: Some(stylesheet),
-        ..usvg::Options::default()
+        ..ai_usvg::Options::default()
     };
 
-    let tree = usvg::Tree::from_str(&svg, &options).unwrap();
+    let tree = ai_usvg::Tree::from_str(&svg, &options).unwrap();
 
-    let usvg::Node::Path(first) = &tree.root().children()[0] else {
+    let ai_usvg::Node::Path(first) = &tree.root().children()[0] else {
         unreachable!()
     };
 
     // Only the rects with no CSS attributes should be overridden.
     assert_eq!(
         first.fill().unwrap().paint(),
-        &usvg::Paint::Color(Color::new_rgb(255, 0, 0))
+        &ai_usvg::Paint::Color(Color::new_rgb(255, 0, 0))
     );
 
-    let usvg::Node::Path(second) = &tree.root().children()[1] else {
+    let ai_usvg::Node::Path(second) = &tree.root().children()[1] else {
         unreachable!()
     };
     assert_eq!(
         second.fill().unwrap().paint(),
-        &usvg::Paint::Color(Color::new_rgb(255, 0, 0))
+        &ai_usvg::Paint::Color(Color::new_rgb(255, 0, 0))
     );
 
-    let usvg::Node::Path(third) = &tree.root().children()[2] else {
+    let ai_usvg::Node::Path(third) = &tree.root().children()[2] else {
         unreachable!()
     };
     assert_eq!(
         third.fill().unwrap().paint(),
-        &usvg::Paint::Color(Color::new_rgb(0, 128, 0))
+        &ai_usvg::Paint::Color(Color::new_rgb(0, 128, 0))
     );
 
-    let usvg::Node::Path(third) = &tree.root().children()[3] else {
+    let ai_usvg::Node::Path(third) = &tree.root().children()[3] else {
         unreachable!()
     };
     assert_eq!(
         third.fill().unwrap().paint(),
-        &usvg::Paint::Color(Color::new_rgb(0, 128, 0))
+        &ai_usvg::Paint::Color(Color::new_rgb(0, 128, 0))
     );
 
-    let usvg::Node::Path(third) = &tree.root().children()[3] else {
+    let ai_usvg::Node::Path(third) = &tree.root().children()[3] else {
         unreachable!()
     };
     assert_eq!(
         third.fill().unwrap().paint(),
-        &usvg::Paint::Color(Color::new_rgb(0, 128, 0))
+        &ai_usvg::Paint::Color(Color::new_rgb(0, 128, 0))
     );
 }
 
@@ -106,53 +106,53 @@ fn stylesheet_injection_with_important() {
 
     let stylesheet = "rect { fill: red !important }".to_string();
 
-    let options = usvg::Options {
+    let options = ai_usvg::Options {
         style_sheet: Some(stylesheet),
-        ..usvg::Options::default()
+        ..ai_usvg::Options::default()
     };
 
-    let tree = usvg::Tree::from_str(&svg, &options).unwrap();
+    let tree = ai_usvg::Tree::from_str(&svg, &options).unwrap();
 
-    let usvg::Node::Path(first) = &tree.root().children()[0] else {
+    let ai_usvg::Node::Path(first) = &tree.root().children()[0] else {
         unreachable!()
     };
 
     // All rects should be overridden, since we use `important`.
     assert_eq!(
         first.fill().unwrap().paint(),
-        &usvg::Paint::Color(Color::new_rgb(255, 0, 0))
+        &ai_usvg::Paint::Color(Color::new_rgb(255, 0, 0))
     );
 
-    let usvg::Node::Path(second) = &tree.root().children()[1] else {
+    let ai_usvg::Node::Path(second) = &tree.root().children()[1] else {
         unreachable!()
     };
     assert_eq!(
         second.fill().unwrap().paint(),
-        &usvg::Paint::Color(Color::new_rgb(255, 0, 0))
+        &ai_usvg::Paint::Color(Color::new_rgb(255, 0, 0))
     );
 
-    let usvg::Node::Path(third) = &tree.root().children()[2] else {
+    let ai_usvg::Node::Path(third) = &tree.root().children()[2] else {
         unreachable!()
     };
     assert_eq!(
         third.fill().unwrap().paint(),
-        &usvg::Paint::Color(Color::new_rgb(255, 0, 0))
+        &ai_usvg::Paint::Color(Color::new_rgb(255, 0, 0))
     );
 
-    let usvg::Node::Path(third) = &tree.root().children()[3] else {
+    let ai_usvg::Node::Path(third) = &tree.root().children()[3] else {
         unreachable!()
     };
     assert_eq!(
         third.fill().unwrap().paint(),
-        &usvg::Paint::Color(Color::new_rgb(255, 0, 0))
+        &ai_usvg::Paint::Color(Color::new_rgb(255, 0, 0))
     );
 
-    let usvg::Node::Path(third) = &tree.root().children()[4] else {
+    let ai_usvg::Node::Path(third) = &tree.root().children()[4] else {
         unreachable!()
     };
     assert_eq!(
         third.fill().unwrap().paint(),
-        &usvg::Paint::Color(Color::new_rgb(255, 0, 0))
+        &ai_usvg::Paint::Color(Color::new_rgb(255, 0, 0))
     );
 }
 
@@ -164,10 +164,10 @@ fn simplify_paths() {
     </svg>
     ";
 
-    let tree = usvg::Tree::from_str(&svg, &usvg::Options::default()).unwrap();
+    let tree = ai_usvg::Tree::from_str(&svg, &ai_usvg::Options::default()).unwrap();
     let path = &tree.root().children()[0];
     match path {
-        usvg::Node::Path(path) => {
+        ai_usvg::Node::Path(path) => {
             // Make sure we have MLZ and not MLZZZ
             assert_eq!(path.data().verbs().len(), 3);
         }
@@ -178,24 +178,24 @@ fn simplify_paths() {
 #[test]
 fn size_detection_1() {
     let svg = "<svg viewBox='0 0 10 20' xmlns='http://www.w3.org/2000/svg'/>";
-    let tree = usvg::Tree::from_str(&svg, &usvg::Options::default()).unwrap();
-    assert_eq!(tree.size(), usvg::Size::from_wh(10.0, 20.0).unwrap());
+    let tree = ai_usvg::Tree::from_str(&svg, &ai_usvg::Options::default()).unwrap();
+    assert_eq!(tree.size(), ai_usvg::Size::from_wh(10.0, 20.0).unwrap());
 }
 
 #[test]
 fn size_detection_2() {
     let svg =
         "<svg width='30' height='40' viewBox='0 0 10 20' xmlns='http://www.w3.org/2000/svg'/>";
-    let tree = usvg::Tree::from_str(&svg, &usvg::Options::default()).unwrap();
-    assert_eq!(tree.size(), usvg::Size::from_wh(30.0, 40.0).unwrap());
+    let tree = ai_usvg::Tree::from_str(&svg, &ai_usvg::Options::default()).unwrap();
+    assert_eq!(tree.size(), ai_usvg::Size::from_wh(30.0, 40.0).unwrap());
 }
 
 #[test]
 fn size_detection_3() {
     let svg =
         "<svg width='50%' height='100%' viewBox='0 0 10 20' xmlns='http://www.w3.org/2000/svg'/>";
-    let tree = usvg::Tree::from_str(&svg, &usvg::Options::default()).unwrap();
-    assert_eq!(tree.size(), usvg::Size::from_wh(5.0, 20.0).unwrap());
+    let tree = ai_usvg::Tree::from_str(&svg, &ai_usvg::Options::default()).unwrap();
+    assert_eq!(tree.size(), ai_usvg::Size::from_wh(5.0, 20.0).unwrap());
 }
 
 #[test]
@@ -205,29 +205,29 @@ fn size_detection_4() {
         <circle cx='18' cy='18' r='18'/>
     </svg>
     ";
-    let tree = usvg::Tree::from_str(&svg, &usvg::Options::default()).unwrap();
-    assert_eq!(tree.size(), usvg::Size::from_wh(36.0, 36.0).unwrap());
-    assert_eq!(tree.size(), usvg::Size::from_wh(36.0, 36.0).unwrap());
+    let tree = ai_usvg::Tree::from_str(&svg, &ai_usvg::Options::default()).unwrap();
+    assert_eq!(tree.size(), ai_usvg::Size::from_wh(36.0, 36.0).unwrap());
+    assert_eq!(tree.size(), ai_usvg::Size::from_wh(36.0, 36.0).unwrap());
 }
 
 #[test]
 fn size_detection_5() {
     let svg = "<svg xmlns='http://www.w3.org/2000/svg'/>";
-    let tree = usvg::Tree::from_str(&svg, &usvg::Options::default()).unwrap();
-    assert_eq!(tree.size(), usvg::Size::from_wh(100.0, 100.0).unwrap());
+    let tree = ai_usvg::Tree::from_str(&svg, &ai_usvg::Options::default()).unwrap();
+    assert_eq!(tree.size(), ai_usvg::Size::from_wh(100.0, 100.0).unwrap());
 }
 
 #[test]
 fn invalid_size_1() {
     let svg = "<svg width='0' height='0' viewBox='0 0 10 20' xmlns='http://www.w3.org/2000/svg'/>";
-    let result = usvg::Tree::from_str(&svg, &usvg::Options::default());
+    let result = ai_usvg::Tree::from_str(&svg, &ai_usvg::Options::default());
     assert!(result.is_err());
 }
 
 #[test]
 fn tree_is_send_and_sync() {
     fn ensure_send_and_sync<T: Send + Sync>() {}
-    ensure_send_and_sync::<usvg::Tree>();
+    ensure_send_and_sync::<ai_usvg::Tree>();
 }
 
 #[test]
@@ -238,26 +238,26 @@ fn path_transform() {
     </svg>
     ";
 
-    let tree = usvg::Tree::from_str(&svg, &usvg::Options::default()).unwrap();
+    let tree = ai_usvg::Tree::from_str(&svg, &ai_usvg::Options::default()).unwrap();
     assert_eq!(tree.root().children().len(), 1);
 
     let group_node = &tree.root().children()[0];
-    assert!(matches!(group_node, usvg::Node::Group(_)));
+    assert!(matches!(group_node, ai_usvg::Node::Group(_)));
     assert_eq!(
         group_node.abs_transform(),
-        usvg::Transform::from_translate(10.0, 0.0)
+        ai_usvg::Transform::from_translate(10.0, 0.0)
     );
 
     let group = match group_node {
-        usvg::Node::Group(g) => g,
+        ai_usvg::Node::Group(g) => g,
         _ => unreachable!(),
     };
 
     let path = &group.children()[0];
-    assert!(matches!(path, usvg::Node::Path(_)));
+    assert!(matches!(path, ai_usvg::Node::Path(_)));
     assert_eq!(
         path.abs_transform(),
-        usvg::Transform::from_translate(10.0, 0.0)
+        ai_usvg::Transform::from_translate(10.0, 0.0)
     );
 }
 
@@ -271,38 +271,38 @@ fn path_transform_nested() {
     </svg>
     ";
 
-    let tree = usvg::Tree::from_str(&svg, &usvg::Options::default()).unwrap();
+    let tree = ai_usvg::Tree::from_str(&svg, &ai_usvg::Options::default()).unwrap();
     assert_eq!(tree.root().children().len(), 1);
 
     let group_node1 = &tree.root().children()[0];
-    assert!(matches!(group_node1, usvg::Node::Group(_)));
+    assert!(matches!(group_node1, ai_usvg::Node::Group(_)));
     assert_eq!(
         group_node1.abs_transform(),
-        usvg::Transform::from_translate(20.0, 0.0)
+        ai_usvg::Transform::from_translate(20.0, 0.0)
     );
 
     let group1 = match group_node1 {
-        usvg::Node::Group(g) => g,
+        ai_usvg::Node::Group(g) => g,
         _ => unreachable!(),
     };
 
     let group_node2 = &group1.children()[0];
-    assert!(matches!(group_node2, usvg::Node::Group(_)));
+    assert!(matches!(group_node2, ai_usvg::Node::Group(_)));
     assert_eq!(
         group_node2.abs_transform(),
-        usvg::Transform::from_translate(30.0, 0.0)
+        ai_usvg::Transform::from_translate(30.0, 0.0)
     );
 
     let group2 = match group_node2 {
-        usvg::Node::Group(g) => g,
+        ai_usvg::Node::Group(g) => g,
         _ => unreachable!(),
     };
 
     let path = &group2.children()[0];
-    assert!(matches!(path, usvg::Node::Path(_)));
+    assert!(matches!(path, ai_usvg::Node::Path(_)));
     assert_eq!(
         path.abs_transform(),
-        usvg::Transform::from_translate(30.0, 0.0)
+        ai_usvg::Transform::from_translate(30.0, 0.0)
     );
 }
 
@@ -328,35 +328,35 @@ fn path_transform_in_symbol_no_clip() {
     //     </g>
     // </svg>
 
-    let tree = usvg::Tree::from_str(&svg, &usvg::Options::default()).unwrap();
+    let tree = ai_usvg::Tree::from_str(&svg, &ai_usvg::Options::default()).unwrap();
 
     let group_node1 = &tree.root().children()[0];
-    assert!(matches!(group_node1, usvg::Node::Group(_)));
+    assert!(matches!(group_node1, ai_usvg::Node::Group(_)));
     assert_eq!(group_node1.id(), "use1");
-    assert_eq!(group_node1.abs_transform(), usvg::Transform::default());
+    assert_eq!(group_node1.abs_transform(), ai_usvg::Transform::default());
 
     let group1 = match group_node1 {
-        usvg::Node::Group(g) => g,
+        ai_usvg::Node::Group(g) => g,
         _ => unreachable!(),
     };
 
     let group_node2 = &group1.children()[0];
-    assert!(matches!(group_node2, usvg::Node::Group(_)));
+    assert!(matches!(group_node2, ai_usvg::Node::Group(_)));
     assert_eq!(
         group_node2.abs_transform(),
-        usvg::Transform::from_translate(20.0, 0.0)
+        ai_usvg::Transform::from_translate(20.0, 0.0)
     );
 
     let group2 = match group_node2 {
-        usvg::Node::Group(g) => g,
+        ai_usvg::Node::Group(g) => g,
         _ => unreachable!(),
     };
 
     let path = &group2.children()[0];
-    assert!(matches!(path, usvg::Node::Path(_)));
+    assert!(matches!(path, ai_usvg::Node::Path(_)));
     assert_eq!(
         path.abs_transform(),
-        usvg::Transform::from_translate(20.0, 0.0)
+        ai_usvg::Transform::from_translate(20.0, 0.0)
     );
 }
 
@@ -389,44 +389,44 @@ fn path_transform_in_symbol_with_clip() {
     //     </g>
     // </svg>
 
-    let tree = usvg::Tree::from_str(&svg, &usvg::Options::default()).unwrap();
+    let tree = ai_usvg::Tree::from_str(&svg, &ai_usvg::Options::default()).unwrap();
 
     let group_node1 = &tree.root().children()[0];
-    assert!(matches!(group_node1, usvg::Node::Group(_)));
+    assert!(matches!(group_node1, ai_usvg::Node::Group(_)));
     assert_eq!(group_node1.id(), "use1");
-    assert_eq!(group_node1.abs_transform(), usvg::Transform::default());
+    assert_eq!(group_node1.abs_transform(), ai_usvg::Transform::default());
 
     let group1 = match group_node1 {
-        usvg::Node::Group(g) => g,
+        ai_usvg::Node::Group(g) => g,
         _ => unreachable!(),
     };
 
     let group_node2 = &group1.children()[0];
-    assert!(matches!(group_node2, usvg::Node::Group(_)));
-    assert_eq!(group_node2.abs_transform(), usvg::Transform::default());
+    assert!(matches!(group_node2, ai_usvg::Node::Group(_)));
+    assert_eq!(group_node2.abs_transform(), ai_usvg::Transform::default());
 
     let group2 = match group_node2 {
-        usvg::Node::Group(g) => g,
+        ai_usvg::Node::Group(g) => g,
         _ => unreachable!(),
     };
 
     let group_node3 = &group2.children()[0];
-    assert!(matches!(group_node3, usvg::Node::Group(_)));
+    assert!(matches!(group_node3, ai_usvg::Node::Group(_)));
     assert_eq!(
         group_node3.abs_transform(),
-        usvg::Transform::from_translate(20.0, 0.0)
+        ai_usvg::Transform::from_translate(20.0, 0.0)
     );
 
     let group3 = match group_node3 {
-        usvg::Node::Group(g) => g,
+        ai_usvg::Node::Group(g) => g,
         _ => unreachable!(),
     };
 
     let path = &group3.children()[0];
-    assert!(matches!(path, usvg::Node::Path(_)));
+    assert!(matches!(path, ai_usvg::Node::Path(_)));
     assert_eq!(
         path.abs_transform(),
-        usvg::Transform::from_translate(20.0, 0.0)
+        ai_usvg::Transform::from_translate(20.0, 0.0)
     );
 }
 
@@ -456,39 +456,39 @@ fn path_transform_in_svg() {
     //     </g>
     // </svg>
 
-    let tree = usvg::Tree::from_str(&svg, &usvg::Options::default()).unwrap();
+    let tree = ai_usvg::Tree::from_str(&svg, &ai_usvg::Options::default()).unwrap();
 
     let group_node1 = &tree.root().children()[0];
-    assert!(matches!(group_node1, usvg::Node::Group(_)));
+    assert!(matches!(group_node1, ai_usvg::Node::Group(_)));
     assert_eq!(group_node1.id(), "g1");
     assert_eq!(
         group_node1.abs_transform(),
-        usvg::Transform::from_translate(100.0, 150.0)
+        ai_usvg::Transform::from_translate(100.0, 150.0)
     );
 
     let group1 = match group_node1 {
-        usvg::Node::Group(g) => g,
+        ai_usvg::Node::Group(g) => g,
         _ => unreachable!(),
     };
 
     let group_node2 = &group1.children()[0];
-    assert!(matches!(group_node2, usvg::Node::Group(_)));
+    assert!(matches!(group_node2, ai_usvg::Node::Group(_)));
     assert_eq!(group_node2.id(), "svg1");
     assert_eq!(
         group_node2.abs_transform(),
-        usvg::Transform::from_translate(100.0, 150.0)
+        ai_usvg::Transform::from_translate(100.0, 150.0)
     );
 
     let group2 = match group_node2 {
-        usvg::Node::Group(g) => g,
+        ai_usvg::Node::Group(g) => g,
         _ => unreachable!(),
     };
 
     let path = &group2.children()[0];
-    assert!(matches!(path, usvg::Node::Path(_)));
+    assert!(matches!(path, ai_usvg::Node::Path(_)));
     assert_eq!(
         path.abs_transform(),
-        usvg::Transform::from_translate(100.0, 150.0)
+        ai_usvg::Transform::from_translate(100.0, 150.0)
     );
 }
 
@@ -500,8 +500,8 @@ fn svg_without_xmlns() {
     </svg>
     ";
 
-    let tree = usvg::Tree::from_str(&svg, &usvg::Options::default()).unwrap();
-    assert_eq!(tree.size(), usvg::Size::from_wh(100.0, 100.0).unwrap());
+    let tree = ai_usvg::Tree::from_str(&svg, &ai_usvg::Options::default()).unwrap();
+    assert_eq!(tree.size(), ai_usvg::Size::from_wh(100.0, 100.0).unwrap());
 }
 
 #[test]
@@ -516,15 +516,15 @@ fn image_bbox_with_parent_transform() {
     </svg>
     ";
 
-    let tree = usvg::Tree::from_str(&svg, &usvg::Options::default()).unwrap();
+    let tree = ai_usvg::Tree::from_str(&svg, &ai_usvg::Options::default()).unwrap();
 
-    let usvg::Node::Group(group_node1) = &tree.root().children()[0] else {
+    let ai_usvg::Node::Group(group_node1) = &tree.root().children()[0] else {
         unreachable!()
     };
-    let usvg::Node::Group(group_node2) = &group_node1.children()[0] else {
+    let ai_usvg::Node::Group(group_node2) = &group_node1.children()[0] else {
         unreachable!()
     };
-    let usvg::Node::Image(image_node) = &group_node2.children()[0] else {
+    let ai_usvg::Node::Image(image_node) = &group_node2.children()[0] else {
         unreachable!()
     };
 
@@ -544,6 +544,6 @@ fn no_text_nodes() {
     </svg>
     ";
 
-    let tree = usvg::Tree::from_str(&svg, &usvg::Options::default()).unwrap();
+    let tree = ai_usvg::Tree::from_str(&svg, &ai_usvg::Options::default()).unwrap();
     assert!(!tree.has_text_nodes());
 }

@@ -176,6 +176,7 @@ use crate::render;
 #[test] fn filters_feGaussianBlur_stdDeviation_eq_5_0() { assert_eq!(render("tests/filters/feGaussianBlur/stdDeviation=5-0"), 0); }
 #[test] fn filters_feGaussianBlur_tiny_stdDeviation() { assert_eq!(render("tests/filters/feGaussianBlur/tiny-stdDeviation"), 0); }
 #[test] fn filters_feImage_chained_feImage() { assert_eq!(render("tests/filters/feImage/chained-feImage"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn filters_feImage_embedded_png() { assert_eq!(render("tests/filters/feImage/embedded-png"), 0); }
 #[test] fn filters_feImage_empty() { assert_eq!(render("tests/filters/feImage/empty"), 0); }
 #[test] fn filters_feImage_link_on_an_element_with_complex_transform() { assert_eq!(render("tests/filters/feImage/link-on-an-element-with-complex-transform"), 0); }
@@ -188,16 +189,23 @@ use crate::render;
 #[test] fn filters_feImage_link_to_an_invalid_element() { assert_eq!(render("tests/filters/feImage/link-to-an-invalid-element"), 0); }
 #[test] fn filters_feImage_link_to_g() { assert_eq!(render("tests/filters/feImage/link-to-g"), 0); }
 #[test] fn filters_feImage_link_to_use() { assert_eq!(render("tests/filters/feImage/link-to-use"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn filters_feImage_preserveAspectRatio_eq_none() { assert_eq!(render("tests/filters/feImage/preserveAspectRatio=none"), 0); }
 #[test] fn filters_feImage_recursive_links_1() { assert_eq!(render("tests/filters/feImage/recursive-links-1"), 0); }
 #[test] fn filters_feImage_recursive_links_2() { assert_eq!(render("tests/filters/feImage/recursive-links-2"), 0); }
 #[test] fn filters_feImage_self_recursive() { assert_eq!(render("tests/filters/feImage/self-recursive"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn filters_feImage_simple_case() { assert_eq!(render("tests/filters/feImage/simple-case"), 0); }
 #[test] fn filters_feImage_svg() { assert_eq!(render("tests/filters/feImage/svg"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn filters_feImage_with_subregion_1() { assert_eq!(render("tests/filters/feImage/with-subregion-1"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn filters_feImage_with_subregion_2() { assert_eq!(render("tests/filters/feImage/with-subregion-2"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn filters_feImage_with_subregion_3() { assert_eq!(render("tests/filters/feImage/with-subregion-3"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn filters_feImage_with_subregion_4() { assert_eq!(render("tests/filters/feImage/with-subregion-4"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn filters_feImage_with_subregion_5() { assert_eq!(render("tests/filters/feImage/with-subregion-5"), 0); }
 #[test] fn filters_feImage_with_x_y_and_protruding_subregion_1() { assert_eq!(render("tests/filters/feImage/with-x-y-and-protruding-subregion-1"), 0); }
 #[test] fn filters_feImage_with_x_y_and_protruding_subregion_2() { assert_eq!(render("tests/filters/feImage/with-x-y-and-protruding-subregion-2"), 0); }
@@ -403,6 +411,7 @@ use crate::render;
 #[test] fn filters_flood_color_simple_case() { assert_eq!(render("tests/filters/flood-color/simple-case"), 0); }
 #[test] fn filters_flood_opacity_50percent() { assert_eq!(render("tests/filters/flood-opacity/50percent"), 0); }
 #[test] fn filters_flood_opacity_simple_case() { assert_eq!(render("tests/filters/flood-opacity/simple-case"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn masking_clip_simple_case() { assert_eq!(render("tests/masking/clip/simple-case"), 0); }
 #[test] fn masking_clip_rule_clip_rule_eq_evenodd() { assert_eq!(render("tests/masking/clip-rule/clip-rule=evenodd"), 0); }
 #[test] fn masking_clipPath_circle_shorthand_with_stroke_box() { assert_eq!(render("tests/masking/clipPath/circle-shorthand-with-stroke-box"), 0); }
@@ -491,7 +500,9 @@ use crate::render;
 #[test] fn masking_mask_transform_has_no_effect() { assert_eq!(render("tests/masking/mask/transform-has-no-effect"), 0); }
 #[test] fn masking_mask_transform_on_shape() { assert_eq!(render("tests/masking/mask/transform-on-shape"), 0); }
 #[test] fn masking_mask_with_clip_path() { assert_eq!(render("tests/masking/mask/with-clip-path"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn masking_mask_with_grayscale_image() { assert_eq!(render("tests/masking/mask/with-grayscale-image"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn masking_mask_with_image() { assert_eq!(render("tests/masking/mask/with-image"), 0); }
 #[test] fn masking_mask_with_opacity_1() { assert_eq!(render("tests/masking/mask/with-opacity-1"), 0); }
 #[test] fn masking_mask_with_opacity_2() { assert_eq!(render("tests/masking/mask/with-opacity-2"), 0); }
@@ -743,9 +754,12 @@ use crate::render;
 #[test] fn painting_fill_opacity_with_pattern() { assert_eq!(render("tests/painting/fill-opacity/with-pattern"), 0); }
 #[test] fn painting_fill_rule_evenodd() { assert_eq!(render("tests/painting/fill-rule/evenodd"), 0); }
 #[test] fn painting_fill_rule_nonzero() { assert_eq!(render("tests/painting/fill-rule/nonzero"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn painting_image_rendering_high_quality() { assert_eq!(render("tests/painting/image-rendering/high-quality"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn painting_image_rendering_on_feImage() { assert_eq!(render("tests/painting/image-rendering/on-feImage"), 0); }
 #[test] fn painting_image_rendering_optimizeSpeed_on_SVG() { assert_eq!(render("tests/painting/image-rendering/optimizeSpeed-on-SVG"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn painting_image_rendering_optimizeSpeed() { assert_eq!(render("tests/painting/image-rendering/optimizeSpeed"), 0); }
 #[test] fn painting_isolation_as_property() { assert_eq!(render("tests/painting/isolation/as-property"), 0); }
 #[test] fn painting_isolation_isolate() { assert_eq!(render("tests/painting/isolation/isolate"), 0); }
@@ -1097,57 +1111,87 @@ use crate::render;
 #[test] fn structure_defs_style_inheritance() { assert_eq!(render("tests/structure/defs/style-inheritance"), 0); }
 #[test] fn structure_g_deeply_nested_groups() { assert_eq!(render("tests/structure/g/deeply-nested-groups"), 0); }
 #[test] fn structure_g_recursive_inheritance() { assert_eq!(render("tests/structure/g/recursive-inheritance"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_image_embedded_16bit_png() { assert_eq!(render("tests/structure/image/embedded-16bit-png"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_image_embedded_gif() { assert_eq!(render("tests/structure/image/embedded-gif"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_image_embedded_jpeg_as_image_jpeg() { assert_eq!(render("tests/structure/image/embedded-jpeg-as-image-jpeg"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_image_embedded_jpeg_as_image_jpg() { assert_eq!(render("tests/structure/image/embedded-jpeg-as-image-jpg"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_image_embedded_jpeg_luma() { assert_eq!(render("tests/structure/image/embedded-jpeg-luma"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_image_embedded_jpeg_without_mime() { assert_eq!(render("tests/structure/image/embedded-jpeg-without-mime"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_image_embedded_png_luma() { assert_eq!(render("tests/structure/image/embedded-png-luma"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_image_embedded_png() { assert_eq!(render("tests/structure/image/embedded-png"), 0); }
 #[test] fn structure_image_embedded_svg_with_text() { assert_eq!(render("tests/structure/image/embedded-svg-with-text"), 0); }
 #[test] fn structure_image_embedded_svg_without_mime() { assert_eq!(render("tests/structure/image/embedded-svg-without-mime"), 0); }
 #[test] fn structure_image_embedded_svg() { assert_eq!(render("tests/structure/image/embedded-svg"), 0); }
 #[test] fn structure_image_embedded_svgz() { assert_eq!(render("tests/structure/image/embedded-svgz"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_image_embedded_webp() { assert_eq!(render("tests/structure/image/embedded-webp"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_image_external_gif() { assert_eq!(render("tests/structure/image/external-gif"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_image_external_jpeg() { assert_eq!(render("tests/structure/image/external-jpeg"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_image_external_png() { assert_eq!(render("tests/structure/image/external-png"), 0); }
 #[test] fn structure_image_external_svg_with_transform() { assert_eq!(render("tests/structure/image/external-svg-with-transform"), 0); }
 #[test] fn structure_image_external_svg() { assert_eq!(render("tests/structure/image/external-svg"), 0); }
 #[test] fn structure_image_external_svgz() { assert_eq!(render("tests/structure/image/external-svgz"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_image_external_webp() { assert_eq!(render("tests/structure/image/external-webp"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_image_float_size() { assert_eq!(render("tests/structure/image/float-size"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_image_image_with_float_size_scaling() { assert_eq!(render("tests/structure/image/image-with-float-size-scaling"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_image_nested_embedded_png() { assert_eq!(render("tests/structure/image/nested-embedded-png"), 0); }
 #[test] fn structure_image_nested_external_png() { assert_eq!(render("tests/structure/image/nested-external-png"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_image_no_height_non_square() { assert_eq!(render("tests/structure/image/no-height-non-square"), 0); }
 #[test] fn structure_image_no_height_on_svg() { assert_eq!(render("tests/structure/image/no-height-on-svg"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_image_no_height() { assert_eq!(render("tests/structure/image/no-height"), 0); }
 #[test] fn structure_image_no_width_and_height_on_svg() { assert_eq!(render("tests/structure/image/no-width-and-height-on-svg"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_image_no_width_and_height() { assert_eq!(render("tests/structure/image/no-width-and-height"), 0); }
 #[test] fn structure_image_no_width_on_svg() { assert_eq!(render("tests/structure/image/no-width-on-svg"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_image_no_width() { assert_eq!(render("tests/structure/image/no-width"), 0); }
 #[test] fn structure_image_preserveAspectRatio_eq_none_on_svg() { assert_eq!(render("tests/structure/image/preserveAspectRatio=none-on-svg"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_image_preserveAspectRatio_eq_none() { assert_eq!(render("tests/structure/image/preserveAspectRatio=none"), 0); }
 #[test] fn structure_image_preserveAspectRatio_eq_xMaxYMax_meet_on_svg() { assert_eq!(render("tests/structure/image/preserveAspectRatio=xMaxYMax-meet-on-svg"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_image_preserveAspectRatio_eq_xMaxYMax_meet() { assert_eq!(render("tests/structure/image/preserveAspectRatio=xMaxYMax-meet"), 0); }
 #[test] fn structure_image_preserveAspectRatio_eq_xMaxYMax_slice_on_svg() { assert_eq!(render("tests/structure/image/preserveAspectRatio=xMaxYMax-slice-on-svg"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_image_preserveAspectRatio_eq_xMaxYMax_slice() { assert_eq!(render("tests/structure/image/preserveAspectRatio=xMaxYMax-slice"), 0); }
 #[test] fn structure_image_preserveAspectRatio_eq_xMidYMid_meet_on_svg() { assert_eq!(render("tests/structure/image/preserveAspectRatio=xMidYMid-meet-on-svg"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_image_preserveAspectRatio_eq_xMidYMid_meet() { assert_eq!(render("tests/structure/image/preserveAspectRatio=xMidYMid-meet"), 0); }
 #[test] fn structure_image_preserveAspectRatio_eq_xMidYMid_slice_on_svg() { assert_eq!(render("tests/structure/image/preserveAspectRatio=xMidYMid-slice-on-svg"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_image_preserveAspectRatio_eq_xMidYMid_slice() { assert_eq!(render("tests/structure/image/preserveAspectRatio=xMidYMid-slice"), 0); }
 #[test] fn structure_image_preserveAspectRatio_eq_xMinYMin_meet_on_svg() { assert_eq!(render("tests/structure/image/preserveAspectRatio=xMinYMin-meet-on-svg"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_image_preserveAspectRatio_eq_xMinYMin_meet() { assert_eq!(render("tests/structure/image/preserveAspectRatio=xMinYMin-meet"), 0); }
 #[test] fn structure_image_preserveAspectRatio_eq_xMinYMin_slice_on_svg() { assert_eq!(render("tests/structure/image/preserveAspectRatio=xMinYMin-slice-on-svg"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_image_preserveAspectRatio_eq_xMinYMin_slice() { assert_eq!(render("tests/structure/image/preserveAspectRatio=xMinYMin-slice"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_image_raster_image_and_size_with_odd_numbers() { assert_eq!(render("tests/structure/image/raster-image-and-size-with-odd-numbers"), 0); }
 #[test] fn structure_image_recursive_1() { assert_eq!(render("tests/structure/image/recursive-1"), 0); }
 #[test] fn structure_image_recursive_2() { assert_eq!(render("tests/structure/image/recursive-2"), 0); }
 #[test] fn structure_image_url_to_png() { assert_eq!(render("tests/structure/image/url-to-png"), 0); }
 #[test] fn structure_image_url_to_svg() { assert_eq!(render("tests/structure/image/url-to-svg"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_image_width_and_height_set_to_auto() { assert_eq!(render("tests/structure/image/width-and-height-set-to-auto"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_image_with_transform() { assert_eq!(render("tests/structure/image/with-transform"), 0); }
 #[test] fn structure_image_with_zero_width_and_height() { assert_eq!(render("tests/structure/image/with-zero-width-and-height"), 0); }
 #[test] fn structure_image_zero_height() { assert_eq!(render("tests/structure/image/zero-height"), 0); }
@@ -1237,6 +1281,7 @@ use crate::render;
 #[test] fn structure_symbol_unused_symbol() { assert_eq!(render("tests/structure/symbol/unused-symbol"), 0); }
 #[test] fn structure_symbol_with_custom_use_size() { assert_eq!(render("tests/structure/symbol/with-custom-use-size"), 0); }
 #[test] fn structure_symbol_with_overflow_visible() { assert_eq!(render("tests/structure/symbol/with-overflow-visible"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_symbol_with_size_on_use_and_relative_units() { assert_eq!(render("tests/structure/symbol/with-size-on-use-and-relative-units"), 0); }
 #[test] fn structure_symbol_with_transform_on_use_no_size() { assert_eq!(render("tests/structure/symbol/with-transform-on-use-no-size"), 0); }
 #[test] fn structure_symbol_with_transform_on_use() { assert_eq!(render("tests/structure/symbol/with-transform-on-use"), 0); }
@@ -1285,6 +1330,7 @@ use crate::render;
 #[test] fn structure_transform_origin_on_gradient_object_bounding_box() { assert_eq!(render("tests/structure/transform-origin/on-gradient-object-bounding-box"), 0); }
 #[test] fn structure_transform_origin_on_gradient_user_space_on_use() { assert_eq!(render("tests/structure/transform-origin/on-gradient-user-space-on-use"), 0); }
 #[test] fn structure_transform_origin_on_group() { assert_eq!(render("tests/structure/transform-origin/on-group"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn structure_transform_origin_on_image() { assert_eq!(render("tests/structure/transform-origin/on-image"), 0); }
 #[test] fn structure_transform_origin_on_pattern_object_bounding_box() { assert_eq!(render("tests/structure/transform-origin/on-pattern-object-bounding-box"), 0); }
 #[test] fn structure_transform_origin_on_pattern_user_space_on_use() { assert_eq!(render("tests/structure/transform-origin/on-pattern-user-space-on-use"), 0); }
@@ -1378,6 +1424,7 @@ use crate::render;
 #[test] fn text_baseline_shift_sub() { assert_eq!(render("tests/text/baseline-shift/sub"), 0); }
 #[test] fn text_baseline_shift_super() { assert_eq!(render("tests/text/baseline-shift/super"), 0); }
 #[test] fn text_baseline_shift_with_rotate() { assert_eq!(render("tests/text/baseline-shift/with-rotate"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn text_color_font_cbdt() { assert_eq!(render("tests/text/color-font/cbdt"), 0); }
 #[test] fn text_color_font_colrv0() { assert_eq!(render("tests/text/color-font/colrv0"), 0); }
 #[test] fn text_color_font_colrv1() { assert_eq!(render("tests/text/color-font/colrv1"), 0); }
@@ -1385,6 +1432,7 @@ use crate::render;
 #[test] fn text_color_font_compound_emojis() { assert_eq!(render("tests/text/color-font/compound-emojis"), 0); }
 #[test] fn text_color_font_mixed_text_rtl() { assert_eq!(render("tests/text/color-font/mixed-text-rtl"), 0); }
 #[test] fn text_color_font_mixed_text() { assert_eq!(render("tests/text/color-font/mixed-text"), 0); }
+#[cfg(feature = "raster-images")]
 #[test] fn text_color_font_sbix() { assert_eq!(render("tests/text/color-font/sbix"), 0); }
 #[test] fn text_color_font_svg() { assert_eq!(render("tests/text/color-font/svg"), 0); }
 #[test] fn text_color_font_writing_mode_eq_tb() { assert_eq!(render("tests/text/color-font/writing-mode=tb"), 0); }

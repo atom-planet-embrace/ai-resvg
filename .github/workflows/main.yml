@@ -38,7 +38,7 @@ jobs:
 
     # We have to use the Release mode, otherwise it would take forever.
     - name: Test
-      run: cargo test --all --features std --release
+      run: cargo test --all --features std,raster-images --release
 
     - name: Build C API
       working-directory: crates/c-api

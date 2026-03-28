@@ -996,11 +996,11 @@ impl Node {
     /// # Example
     ///
     /// ```no_run
-    /// fn all_nodes(parent: &usvg::Group) {
+    /// fn all_nodes(parent: &ai_usvg::Group) {
     ///     for node in parent.children() {
     ///         // do stuff...
     ///
-    ///         if let usvg::Node::Group(g) = node {
+    ///         if let ai_usvg::Node::Group(g) = node {
     ///             all_nodes(g);
     ///         }
     ///

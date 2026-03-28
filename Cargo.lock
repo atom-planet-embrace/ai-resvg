@@ -33,6 +33,7 @@ name = "ai-resvg"
 version = "0.47.0"
 dependencies = [
  "ai-usvg",
+ "fontdb",
  "gif",
  "image-webp",
  "libm",
@@ -98,7 +99,8 @@ dependencies = [
 [[package]]
 name = "ai-xmlwriter"
 version = "0.1.0"
-source = "git+https://github.com/atom-planet-embrace/ai-xmlwriter#7d11bf2224cc2f2305299a3c09e2eb5a1524c353"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "58f338be6340aa7e1f59c34206dc4462d77af4d84beca5053d0641a2b5e3b4eb"
 dependencies = [
  "no_std_io",
 ]

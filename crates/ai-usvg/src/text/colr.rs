@@ -50,7 +50,7 @@ trait XmlWriterExt {
     fn write_spread_method_attribute(&mut self, method: ttf_parser::colr::GradientExtend);
 }
 
-impl XmlWriterExt for xmlwriter::XmlWriter {
+impl XmlWriterExt for crate::writer::XmlWriter {
     fn write_color_attribute(&mut self, name: &str, color: ttf_parser::RgbaColor) {
         self.write_attribute_fmt(
             name,
@@ -87,7 +87,7 @@ impl XmlWriterExt for xmlwriter::XmlWriter {
 // NOTE: This is only a best-effort translation of COLR into SVG.
 pub(crate) struct GlyphPainter<'a> {
     pub(crate) face: &'a ttf_parser::Face<'a>,
-    pub(crate) svg: &'a mut xmlwriter::XmlWriter,
+    pub(crate) svg: &'a mut crate::writer::XmlWriter,
     pub(crate) path_buf: &'a mut String,
     pub(crate) gradient_index: usize,
     pub(crate) clip_path_index: usize,
