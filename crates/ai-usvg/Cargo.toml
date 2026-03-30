@@ -28,7 +28,7 @@ pico-args = { version = "0.5", features = ["eq-separator"], optional = true }
 strict-num = { package = "ai-strict-num", version = "0.2" }
 svgtypes = { version = "0.16.1", default-features = false, features = ["libm"] }
 tiny-skia-path = { version = "0.12.0", default-features = false, features = ["no-std-float"] }
-xmlwriter = { package = "ai-xmlwriter", git = "https://github.com/atom-planet-embrace/ai-xmlwriter", default-features = false }
+xmlwriter = { package = "ai-xmlwriter", version = "0.1.0", default-features = false }
 
 # parser
 data-url = { version = "0.3", default-features = false, features = ["alloc"] } # for href parsing

@@ -99,7 +99,8 @@ dependencies = [
 [[package]]
 name = "ai-xmlwriter"
 version = "0.1.0"
-source = "git+https://github.com/atom-planet-embrace/ai-xmlwriter#cde9aebeb1a377e41bf5bcc9683d7cb6321fd89d"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bfbbd4a400a5dc5a38786e28daac0a72288dcc7cc4298c47c9a8131e2fd96324"
 
 [[package]]
 name = "allocator-api2"
